@@ -1,0 +1,30 @@
+{
+  "development": {
+    "username": "avnadmin",
+    "password": "AVNS_4oVspjBNAW_qSSqMiY9",
+    "database": "defaultdb",
+    "host": "edunova-edunova.j.aivencloud.com",
+    "port": 14793,
+    "dialect": "mysql",
+    "dialectOptions": {
+      "ssl": {
+        "ca": "./ca.pem",
+        "rejectUnauthorized": false
+      }
+    }
+  },
+  "test": {
+    "username": "root",
+    "password": null,
+    "database": "database_test",
+    "host": "127.0.0.1",
+    "dialect": "mysql"
+  },
+  "production": {
+    "username": "root",
+    "password": null,
+    "database": "database_production",
+    "host": "127.0.0.1",
+    "dialect": "mysql"
+  }
+}
