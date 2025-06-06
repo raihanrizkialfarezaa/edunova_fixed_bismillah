@@ -95,6 +95,9 @@ export default function Home() {
   const [loadingAssignments, setLoadingAssignments] = useState(false);
   const [loadingEnrollments, setLoadingEnrollments] = useState(false);
 
+  // Tambahkan state untuk expand/collapse courses di luar render
+  const [showAllCourses, setShowAllCourses] = useState(false);
+
   // Define a consistent color palette for buttons for dark mode
   const buttonColors = {
     primary: 'bg-indigo-600 hover:bg-indigo-700', // For main actions like "Take Quiz", "Manage Courses"
@@ -414,38 +417,72 @@ export default function Home() {
                 <div className="flex justify-center py-12">
                   <div className="animate-pulse text-gray-400 text-lg">Memuat kursus...</div>
                 </div>
-              ) : courses.length > 0 ? (
-                <div className="space-y-6">
-                  {courses
-                    .filter((course) => user.role === 'ADMIN' || course.instructorId === user.id)
-                    .map((course) => (
-                      <div key={course.id} className="bg-gray-800/50 hover:bg-gray-700/60 rounded-2xl p-8 transition-all duration-300 border border-gray-600/30 hover:border-blue-500/30 shadow-lg hover:shadow-xl">
-                        <div className="flex flex-col lg:flex-row lg:items-center gap-8">
-                          <div className="flex-1">
-                            <h4 className="text-2xl font-bold text-white mb-3">{course.title}</h4>
-                            <p className="text-gray-300 text-lg leading-relaxed">{course.description}</p>
-                          </div>
-
-                          <div className="flex flex-col sm:flex-row gap-4 lg:w-auto">
-                            <Link
-                              to={`/courses/${course.id}/sections`}
-                              className="text-center bg-gradient-to-r from-teal-600 to-cyan-600 hover:from-teal-500 hover:to-cyan-500 text-white px-6 py-3 rounded-xl text-sm font-bold transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-105"
-                            >
-                              Kelola Bagian
-                            </Link>
-                            <Link
-                              to={`/courses/${course.id}/lessons`}
-                              className="text-center bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white px-6 py-3 rounded-xl text-sm font-bold transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-105"
-                            >
-                              Kelola Pelajaran
-                            </Link>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                </div>
               ) : (
-                <div className="text-center py-12 text-gray-400 text-lg">Tidak ada kursus ditemukan. Saatnya membuat konten yang menakjubkan!</div>
+                (() => {
+                  const filteredCourses = courses.filter((course) => user.role === 'ADMIN' || course.instructorId === user.id);
+                  const displayedCourses = showAllCourses ? filteredCourses : filteredCourses.slice(0, 3);
+                  const hasMoreCourses = filteredCourses.length > 3;
+
+                  return filteredCourses.length > 0 ? (
+                    <div className="space-y-6">
+                      <div className="space-y-6">
+                        {displayedCourses.map((course) => (
+                          <div key={course.id} className="bg-gray-800/50 hover:bg-gray-700/60 rounded-2xl p-8 transition-all duration-300 border border-gray-600/30 hover:border-blue-500/30 shadow-lg hover:shadow-xl">
+                            <div className="flex flex-col lg:flex-row lg:items-center gap-8">
+                              <div className="flex-1">
+                                <h4 className="text-2xl font-bold text-white mb-3">{course.title}</h4>
+                                <p className="text-gray-300 text-lg leading-relaxed">{course.description}</p>
+                              </div>
+
+                              <div className="flex flex-col sm:flex-row gap-4 lg:w-auto">
+                                <Link
+                                  to={`/courses/${course.id}/sections`}
+                                  className="text-center bg-gradient-to-r from-teal-600 to-cyan-600 hover:from-teal-500 hover:to-cyan-500 text-white px-6 py-3 rounded-xl text-sm font-bold transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-105"
+                                >
+                                  Kelola Bagian
+                                </Link>
+                                <Link
+                                  to={`/courses/${course.id}/lessons`}
+                                  className="text-center bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white px-6 py-3 rounded-xl text-sm font-bold transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-105"
+                                >
+                                  Kelola Pelajaran
+                                </Link>
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+
+                      {hasMoreCourses && (
+                        <div className="text-center pt-6">
+                          <button
+                            onClick={() => setShowAllCourses(!showAllCourses)}
+                            className="group inline-flex items-center bg-gradient-to-r from-blue-600/20 to-indigo-600/20 hover:from-blue-600/30 hover:to-indigo-600/30 border border-blue-500/30 hover:border-blue-400/50 text-blue-400 hover:text-blue-300 px-8 py-4 rounded-xl text-lg font-bold transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-105 backdrop-blur-sm"
+                          >
+                            <span className="flex items-center">
+                              {showAllCourses ? (
+                                <>
+                                  Tampilkan Lebih Sedikit
+                                  <ArrowRightIcon className="h-5 w-5 ml-2 rotate-90 group-hover:-translate-y-1 transition-transform duration-300" />
+                                </>
+                              ) : (
+                                <>
+                                  Tampilkan {filteredCourses.length - 3} Kursus Lainnya
+                                  <ArrowRightIcon className="h-5 w-5 ml-2 -rotate-90 group-hover:translate-y-1 transition-transform duration-300" />
+                                </>
+                              )}
+                            </span>
+                          </button>
+                          <p className="text-gray-500 text-sm mt-3">
+                            Menampilkan {displayedCourses.length} dari {filteredCourses.length} kursus
+                          </p>
+                        </div>
+                      )}
+                    </div>
+                  ) : (
+                    <div className="text-center py-12 text-gray-400 text-lg">Tidak ada kursus ditemukan. Saatnya membuat konten yang menakjubkan!</div>
+                  );
+                })()
               )}
             </section>
           )}
