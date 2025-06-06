@@ -35,7 +35,7 @@ export default function QuizForm() {
   const [initialDataLoaded, setInitialDataLoaded] = useState(false);
 
   useEffect(() => {
-    fetchAllCourses();
+    fetchInstructorCourses();
   }, []);
 
   useEffect(() => {
@@ -82,23 +82,24 @@ export default function QuizForm() {
     }
   };
 
-  const fetchAllCourses = async () => {
+  // Replace fetchAllCourses with fetchInstructorCourses
+  const fetchInstructorCourses = async () => {
     try {
-      const response = await axiosInstance.get('/courses');
-      const allCourses: Array<{ id: number; title: string }> = [];
+      const response = await quizApi.getInstructorCourses();
+      const instructorCourses: Array<{ id: number; title: string }> = [];
 
-      // Extract courses
+      // Extract courses - now only instructor's own courses
       response.data.courses.forEach((course: any) => {
-        allCourses.push({
+        instructorCourses.push({
           id: course.id,
           title: course.title,
         });
       });
 
-      setCourses(allCourses);
-      return allCourses;
+      setCourses(instructorCourses);
+      return instructorCourses;
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Gagal mengambil daftar kursus');
+      setError(err.response?.data?.message || 'Gagal mengambil daftar kursus Anda');
       return [];
     }
   };
@@ -308,7 +309,7 @@ export default function QuizForm() {
           {/* Course Selection - Always visible, with different layouts for create/edit */}
           <div>
             <label htmlFor="selectCourse" className="block text-gray-300 text-sm font-semibold mb-2">
-              {id ? 'Kursus (Hanya Tampilan)' : 'Pilih Kursus'}
+              {id ? 'Kursus (Mode Edit: Dikunci Hanya Tampilan)' : 'Pilih Kursus Anda'}
             </label>
             <select
               id="selectCourse"
@@ -320,7 +321,7 @@ export default function QuizForm() {
                          ${id ? 'bg-gray-700 border-gray-600 opacity-75 cursor-not-allowed' : 'bg-gray-800 border-gray-700'}`}
               required={!id}
             >
-              <option value="">{id ? 'Memuat kursus...' : 'Pilih kursus...'}</option>
+              <option value="">{id ? 'Memuat kursus...' : 'Pilih kursus Anda...'}</option>
               {courses.map((course) => (
                 <option key={course.id} value={course.id}>
                   {course.title}
@@ -328,6 +329,7 @@ export default function QuizForm() {
               ))}
             </select>
             {id && <p className="text-xs text-gray-500 mt-1">Kursus tidak dapat diubah saat mengedit kuis</p>}
+            {!id && courses.length === 0 && <p className="text-xs text-yellow-400 mt-1">Anda belum memiliki kursus. Silakan buat kursus terlebih dahulu.</p>}
           </div>
 
           {/* Lesson Selection - Only for new quiz or show current lesson in edit mode */}
@@ -343,8 +345,9 @@ export default function QuizForm() {
                 className="w-full px-4 py-3 rounded-lg bg-gray-800 border border-gray-700 text-gray-100
                            focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300 cursor-pointer shadow-inner"
                 required
+                disabled={!courseId}
               >
-                <option value="">Pilih pelajaran...</option>
+                <option value="">{courseId ? 'Pilih pelajaran...' : 'Pilih kursus terlebih dahulu'}</option>
                 {lessons.map((lesson) => (
                   <option key={lesson.id} value={lesson.id}>
                     {lesson.title}
@@ -481,7 +484,7 @@ export default function QuizForm() {
           <div className="flex gap-4 pt-6 justify-end">
             <button
               type="submit"
-              disabled={loading}
+              disabled={loading || courses.length === 0}
               className="bg-blue-600 hover:bg-blue-700 text-white font-bold px-8 py-4 rounded-xl text-lg
                          disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-300 ease-in-out transform hover:scale-105 shadow-lg"
             >

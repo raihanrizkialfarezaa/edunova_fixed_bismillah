@@ -976,11 +976,11 @@ exports.getAvailableQuizzes = async (req, res) => {
     }
 
     const { Enrollment, Course, Section, Lesson } = require('../models');
-    
+
     // Get courses where student is enrolled
     const enrollments = await Enrollment.findAll({
-      where: { 
-        userId: req.user.id
+      where: {
+        userId: req.user.id,
       },
       include: [
         {
@@ -1002,24 +1002,24 @@ exports.getAvailableQuizzes = async (req, res) => {
                         {
                           model: Question,
                           as: 'Questions',
-                          attributes: ['id']
-                        }
-                      ]
-                    }
-                  ]
-                }
-              ]
-            }
-          ]
-        }
-      ]
+                          attributes: ['id'],
+                        },
+                      ],
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+        },
+      ],
     });
 
     // Extract quizzes from enrolled courses
     const quizzes = [];
-    enrollments.forEach(enrollment => {
-      enrollment.course.sections.forEach(section => {
-        section.lessons.forEach(lesson => {
+    enrollments.forEach((enrollment) => {
+      enrollment.course.sections.forEach((section) => {
+        section.lessons.forEach((lesson) => {
           if (lesson.quiz) {
             quizzes.push({
               id: lesson.quiz.id,
@@ -1029,21 +1029,98 @@ exports.getAvailableQuizzes = async (req, res) => {
               totalPoints: lesson.quiz.Questions ? lesson.quiz.Questions.length : 0,
               course: {
                 id: enrollment.course.id,
-                title: enrollment.course.title
+                title: enrollment.course.title,
               },
-              lessonId: lesson.id
+              lessonId: lesson.id,
             });
           }
         });
       });
     });
 
-    res.json({ 
+    res.json({
       quizzes: quizzes,
-      message: `Found ${quizzes.length} available quizzes`
+      message: `Found ${quizzes.length} available quizzes`,
     });
   } catch (error) {
     console.error('Error in getAvailableQuizzes:', error);
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// For instructor course only
+exports.getInstructorCourses = async (req, res) => {
+  try {
+    const { Course, Section, Lesson, User } = require('../models');
+
+    // Only instructors can access this endpoint
+    if (req.user.role !== 'INSTRUCTOR' && req.user.role !== 'ADMIN') {
+      return res.status(403).json({ message: 'Access denied. Only instructors can access this endpoint.' });
+    }
+
+    let courses;
+
+    if (req.user.role === 'ADMIN') {
+      // Admin can see all courses
+      courses = await Course.findAll({
+        attributes: ['id', 'title', 'instructorId'],
+        include: [
+          {
+            model: User,
+            as: 'instructor', 
+            attributes: ['id', 'name', 'email'],
+          },
+          {
+            model: Section,
+            as: 'Sections', 
+            attributes: ['id', 'title', 'order'],
+            include: [
+              {
+                model: Lesson,
+                as: 'Lessons', 
+                attributes: ['id', 'title', 'order'],
+              },
+            ],
+          },
+        ],
+        order: [['id', 'DESC']],
+      });
+    } else {
+      // Instructor can only see their own courses
+      courses = await Course.findAll({
+        where: {
+          instructorId: req.user.id,
+        },
+        attributes: ['id', 'title', 'instructorId'],
+        include: [
+          {
+            model: User,
+            as: 'instructor', 
+            attributes: ['id', 'name', 'email'],
+          },
+          {
+            model: Section,
+            as: 'Sections', 
+            attributes: ['id', 'title', 'order'],
+            include: [
+              {
+                model: Lesson,
+                as: 'Lessons', 
+                attributes: ['id', 'title', 'order'],
+              },
+            ],
+          },
+        ],
+        order: [['id', 'DESC']],
+      });
+    }
+
+    res.json({
+      courses: courses,
+      message: `Found ${courses.length} courses`,
+    });
+  } catch (error) {
+    console.error('Error in getInstructorCourses:', error);
     res.status(500).json({ message: error.message });
   }
 };
