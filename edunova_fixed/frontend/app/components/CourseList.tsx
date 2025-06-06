@@ -4,20 +4,23 @@ import { enrollAPI } from '../lib/enroll';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import axiosInstance from '../lib/axios';
 // import { Dialog } from '@headlessui/react';
-import { FaSpinner, FaExclamationCircle, FaPlusCircle } from 'react-icons/fa'; // Untuk loading/error dan tombol create
+import { FaSpinner, FaExclamationCircle, FaPlusCircle, FaStar, FaUsers, FaClock, FaBookOpen, FaGraduationCap, FaDollarSign, FaTags, FaUser, FaCheckCircle, FaHourglassHalf, FaPlay } from 'react-icons/fa'; // Untuk loading/error dan tombol create
 
 export default function CoursesList() {
   const [courses, setCourses] = useState<any[]>([]);
   const [pagination, setPagination] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(''); // Tambahkan state error
+  const [userEnrollments, setUserEnrollments] = useState<any[]>([]); // State untuk menyimpan enrollment user
   const { user } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Perbaiki asumsi API: coursesAPI.getAllCourses() lebih masuk akal untuk daftar kursus
-    coursesAPI.getAllQuizzes()
+    // Fetch courses
+    coursesAPI
+      .getAllQuizzes()
       .then((res) => {
         setCourses(res.data?.courses || []);
         setPagination(res.data?.pagination || null);
@@ -27,15 +30,44 @@ export default function CoursesList() {
         setError('Gagal memuat daftar kursus. Silakan coba lagi.'); // Pesan error yang lebih user-friendly
       })
       .finally(() => setLoading(false));
-  }, []);
+
+    // Fetch user enrollments jika user adalah STUDENT
+    if (user?.role === 'STUDENT') {
+      fetchUserEnrollments();
+    }
+  }, [user]);
+
+  const fetchUserEnrollments = async () => {
+    try {
+      const res = await axiosInstance.get('/my-enrollments');
+      setUserEnrollments(res.data.enrollments || []);
+    } catch (err) {
+      console.error('Failed to fetch user enrollments:', err);
+    }
+  };
+
+  // Function untuk check apakah user sudah enroll course tertentu
+  const isUserEnrolled = (courseId: number) => {
+    return userEnrollments.some((enrollment) => enrollment.course?.id === courseId);
+  };
+
+  // Function untuk get enrollment status
+  const getEnrollmentStatus = (courseId: number) => {
+    const enrollment = userEnrollments.find((enrollment) => enrollment.course?.id === courseId);
+    return enrollment;
+  };
 
   // --- Kondisi Loading, Error, dan Tanpa Data ---
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-gray-900">
-        <div className="text-center text-gray-700 dark:text-gray-300">
-          <FaSpinner className="animate-spin text-5xl text-indigo-600 dark:text-indigo-400 mx-auto mb-4" />
-          <p className="text-lg font-medium">Memuat daftar kursus...</p>
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-indigo-900">
+        <div className="text-center">
+          <div className="relative">
+            <div className="w-20 h-20 border-4 border-indigo-200 dark:border-indigo-700 rounded-full animate-spin border-t-indigo-600 dark:border-t-indigo-400 mx-auto mb-6"></div>
+            <FaGraduationCap className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-2xl text-indigo-600 dark:text-indigo-400" />
+          </div>
+          <p className="text-xl font-semibold text-gray-700 dark:text-gray-300 mb-2">Memuat Kursus Premium</p>
+          <p className="text-sm text-gray-500 dark:text-gray-400">Menyiapkan pengalaman belajar terbaik untuk Anda...</p>
         </div>
       </div>
     );
@@ -43,17 +75,18 @@ export default function CoursesList() {
 
   if (error) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-gray-900">
-        <div className="text-center text-red-600 dark:text-red-400">
-          <FaExclamationCircle className="text-5xl mx-auto mb-4" />
-          <p className="text-lg font-medium">{error}</p>
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-red-50 via-white to-pink-50 dark:from-gray-900 dark:via-gray-800 dark:to-red-900">
+        <div className="text-center bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-xl border border-red-100 dark:border-red-800">
+          <FaExclamationCircle className="text-6xl text-red-500 dark:text-red-400 mx-auto mb-4" />
+          <p className="text-xl font-semibold text-red-600 dark:text-red-400 mb-2">Oops! Terjadi Kesalahan</p>
+          <p className="text-gray-600 dark:text-gray-300">{error}</p>
         </div>
       </div>
     );
   }
 
   // Filter kursus berdasarkan peran pengguna
-  const filteredCourses = courses.filter(course => {
+  const filteredCourses = courses.filter((course) => {
     if (user?.role === 'INSTRUCTOR') {
       return course.instructorId === user.id;
     }
@@ -65,16 +98,20 @@ export default function CoursesList() {
 
   if (filteredCourses.length === 0) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-gray-900">
-        <div className="text-center text-gray-700 dark:text-gray-300">
-          <p className="text-lg font-medium">Tidak ada kursus yang ditemukan.</p>
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-indigo-900">
+        <div className="text-center bg-white dark:bg-gray-800 p-12 rounded-3xl shadow-2xl border border-gray-100 dark:border-gray-700 max-w-md">
+          <div className="w-24 h-24 bg-gradient-to-br from-indigo-100 to-purple-100 dark:from-indigo-900 dark:to-purple-900 rounded-full flex items-center justify-center mx-auto mb-6">
+            <FaBookOpen className="text-4xl text-indigo-600 dark:text-indigo-400" />
+          </div>
+          <h3 className="text-2xl font-bold text-gray-800 dark:text-gray-200 mb-4">Belum Ada Kursus</h3>
+          <p className="text-gray-600 dark:text-gray-400 mb-6">Mulai perjalanan belajar Anda dengan membuat kursus pertama</p>
           {user?.role === 'INSTRUCTOR' && (
-             <Link
-                to="/course/create"
-                className="mt-4 inline-flex items-center px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-semibold transition duration-300 ease-in-out transform hover:scale-105 shadow-md"
-              >
-                <FaPlusCircle className="mr-2" /> Buat Kursus Baru
-              </Link>
+            <Link
+              to="/course/create"
+              className="inline-flex items-center px-8 py-4 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white rounded-xl font-semibold transition-all duration-300 ease-in-out transform hover:scale-105 shadow-lg hover:shadow-xl"
+            >
+              <FaPlusCircle className="mr-3 text-lg" /> Buat Kursus Premium
+            </Link>
           )}
         </div>
       </div>
@@ -82,143 +119,268 @@ export default function CoursesList() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100 p-6">
-      <div className="max-w-5xl mx-auto">
-        <h1 className="text-4xl font-extrabold mb-8 text-indigo-700 dark:text-indigo-400 text-center">
-          Daftar Kursus
-        </h1>
+    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-indigo-900">
+      {/* Hero Section */}
+      <div className="relative overflow-hidden bg-gradient-to-r from-indigo-600 via-purple-600 to-indigo-800 dark:from-indigo-800 dark:via-purple-800 dark:to-indigo-900">
+        <div className="absolute inset-0 bg-black opacity-10"></div>
+        <div className="relative max-w-7xl mx-auto px-6 py-16 text-center">
+          <h1 className="text-5xl md:text-6xl font-extrabold text-white mb-6 tracking-tight">
+            Kursus Premium
+            <span className="block text-3xl md:text-4xl font-light mt-2 text-indigo-200">Tingkatkan Karir Anda</span>
+          </h1>
+          <p className="text-xl text-indigo-100 max-w-3xl mx-auto mb-8 leading-relaxed">Bergabunglah dengan ribuan profesional yang telah meningkatkan karir mereka melalui kursus berkualitas tinggi dari instruktur terbaik</p>
 
+          {/* Stats */}
+          <div className="flex flex-wrap justify-center gap-8 mt-12">
+            <div className="text-center">
+              <div className="text-3xl font-bold text-white">{filteredCourses.length}+</div>
+              <div className="text-indigo-200">Kursus Tersedia</div>
+            </div>
+            <div className="text-center">
+              <div className="text-3xl font-bold text-white">50K+</div>
+              <div className="text-indigo-200">Siswa Aktif</div>
+            </div>
+            <div className="text-center">
+              <div className="text-3xl font-bold text-white">4.8</div>
+              <div className="text-indigo-200 flex items-center">
+                <FaStar className="mr-1" /> Rating
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="max-w-7xl mx-auto px-6 py-12">
         {/* Tombol Create */}
-        {user?.role === 'INSTRUCTOR' && ( // Hanya instruktur yang bisa membuat kursus
-          <div className="mb-8 text-center">
+        {user?.role === 'INSTRUCTOR' && (
+          <div className="mb-12 text-center">
             <Link
               to="/course/create"
-              className="inline-flex items-center px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-semibold transition duration-300 ease-in-out transform hover:scale-105 shadow-md"
+              className="inline-flex items-center px-8 py-4 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white rounded-xl font-semibold transition-all duration-300 ease-in-out transform hover:scale-105 shadow-lg hover:shadow-xl"
             >
-              <FaPlusCircle className="mr-2" /> Buat Kursus Baru
+              <FaPlusCircle className="mr-3 text-lg" /> Buat Kursus Premium
             </Link>
           </div>
         )}
-        
+
         {/* Daftar Kursus dalam Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {filteredCourses.map((course) => (
-            <div key={course.id} className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 flex flex-col transform transition duration-300 hover:scale-[1.02] hover:shadow-xl">
-              <img
-                src={course.thumbnail || 'https://via.placeholder.com/400x200.png?text=Thumbnail+Kursus'} // Fallback thumbnail
-                alt={course.title || 'Kursus'}
-                className="w-full h-48 object-cover rounded-lg mb-4 shadow-sm"
-              />
-              <h2 className="text-2xl font-bold mb-2 text-gray-900 dark:text-gray-100 truncate">
-                {course.title || 'Kursus Tanpa Judul'}
-              </h2>
-              <p className="text-sm text-gray-600 dark:text-gray-300 mb-3 line-clamp-3">
-                {course.description || 'Tidak ada deskripsi yang tersedia.'}
-              </p>
-              
-              {/* Detail Kursus */}
-              <div className="text-sm text-gray-700 dark:text-gray-200 space-y-1 mt-auto"> {/* mt-auto pushes content to bottom */}
-                <p><span className="font-semibold">Harga:</span> <span className="text-green-600 dark:text-green-400 font-bold">$ {course.price?.toLocaleString?.('id-ID') ?? '0'}</span></p>
-                <p><span className="font-semibold">Kategori:</span> {course.Categories?.map((c: any) => c.name).join(', ') || 'Tidak ada'}</p>
-                <p><span className="font-semibold">Tag:</span> {course.Tags?.map((t: any) => t.name).join(', ') || 'Tidak ada'}</p>
-                <p className="mt-2"><span className="font-semibold">Instruktur:</span> {course.instructor?.name || 'Tidak diketahui'}</p>
-                <p><span className="font-semibold">Status:</span> <span className={`${course.status === 'PUBLISHED' ? 'text-teal-500' : 'text-yellow-500'}`}>{course.status || '-'}</span></p>
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
+          {filteredCourses.map((course) => {
+            const enrollmentStatus = getEnrollmentStatus(course.id);
+            const isEnrolled = isUserEnrolled(course.id);
+            const isPaid = enrollmentStatus?.payment?.status === 'COMPLETED' || course.price === 0;
+            const isPending = enrollmentStatus?.payment?.status === 'PENDING';
+
+            return (
+              <div key={course.id} className="group bg-white dark:bg-gray-800 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 overflow-hidden border border-gray-100 dark:border-gray-700 transform hover:-translate-y-2">
+                {/* Thumbnail dengan Overlay */}
+                <div className="relative overflow-hidden">
+                  <img src={course.thumbnail || 'https://via.placeholder.com/400x200.png?text=Thumbnail+Kursus'} alt={course.title || 'Kursus'} className="w-full h-48 object-cover transition-transform duration-500 group-hover:scale-110" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+
+                  {/* Status Badge */}
+                  <div className="absolute top-4 right-4">
+                    <span
+                      className={`px-3 py-1 rounded-full text-xs font-semibold flex items-center ${
+                        course.status === 'PUBLISHED' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' : 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200'
+                      }`}
+                    >
+                      {course.status === 'PUBLISHED' ? <FaCheckCircle className="mr-1" /> : <FaHourglassHalf className="mr-1" />}
+                      {course.status || 'Draft'}
+                    </span>
+                  </div>
+
+                  {/* Price Badge */}
+                  <div className="absolute top-4 left-4">
+                    <span className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm text-gray-800 dark:text-gray-200 px-3 py-1 rounded-full text-sm font-bold flex items-center">
+                      <FaDollarSign className="mr-1 text-green-600 dark:text-green-400" />
+                      {course.price?.toLocaleString?.('id-ID') ?? '0'}
+                    </span>
+                  </div>
+
+                  {/* Enrollment Status Badge */}
+                  {user?.role === 'STUDENT' && isEnrolled && (
+                    <div className="absolute bottom-4 left-4">
+                      <span
+                        className={`px-3 py-1 rounded-full text-xs font-semibold flex items-center ${
+                          isPaid ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' : 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200'
+                        }`}
+                      >
+                        <FaCheckCircle className="mr-1" />
+                        {isPaid ? 'Enrolled' : 'Payment Pending'}
+                      </span>
+                    </div>
+                  )}
+                </div>
+
+                {/* Content */}
+                <div className="p-6 flex flex-col h-[calc(100%-12rem)]">
+                  <h2 className="text-xl font-bold mb-3 text-gray-900 dark:text-gray-100 line-clamp-2 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors duration-300">{course.title || 'Kursus Tanpa Judul'}</h2>
+
+                  <p className="text-sm text-gray-600 dark:text-gray-300 mb-4 line-clamp-3 leading-relaxed">{course.description || 'Tidak ada deskripsi yang tersedia.'}</p>
+
+                  {/* Course Meta Info */}
+                  <div className="space-y-3 mb-6 text-sm">
+                    <div className="flex items-center text-gray-600 dark:text-gray-300">
+                      <FaUser className="mr-2 text-indigo-500" />
+                      <span className="font-medium">Instruktur:</span>
+                      <span className="ml-1 text-gray-800 dark:text-gray-200">{course.instructor?.name || 'Tidak diketahui'}</span>
+                    </div>
+
+                    <div className="flex items-center text-gray-600 dark:text-gray-300">
+                      <FaTags className="mr-2 text-purple-500" />
+                      <span className="font-medium">Kategori:</span>
+                      <span className="ml-1 text-gray-800 dark:text-gray-200 line-clamp-1">{course.Categories?.map((c: any) => c.name).join(', ') || 'Tidak ada'}</span>
+                    </div>
+
+                    {course.Tags && course.Tags.length > 0 && (
+                      <div className="flex flex-wrap gap-1 mt-2">
+                        {course.Tags.slice(0, 3).map((tag: any, index: number) => (
+                          <span key={index} className="px-2 py-1 bg-indigo-100 dark:bg-indigo-900 text-indigo-700 dark:text-indigo-300 rounded-full text-xs font-medium">
+                            {tag.name}
+                          </span>
+                        ))}
+                        {course.Tags.length > 3 && <span className="px-2 py-1 bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400 rounded-full text-xs">+{course.Tags.length - 3}</span>}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Action Buttons */}
+                  <div className="flex flex-wrap gap-2 mt-auto">
+                    {(user?.role === 'STUDENT' || user?.role === 'ADMIN' || user?.role === 'INSTRUCTOR') && (
+                      <Link
+                        to={`/courses/${course.id}`}
+                        className="flex-1 min-w-[100px] px-4 py-2 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white rounded-lg text-sm font-medium transition-all duration-300 ease-in-out transform hover:scale-105 shadow-md hover:shadow-lg text-center"
+                      >
+                        Detail
+                      </Link>
+                    )}
+
+                    {(user?.role === 'ADMIN' || user?.role === 'INSTRUCTOR') && (
+                      <>
+                        <Link
+                          to={`/courses/${course.id}/edit`}
+                          className="flex-1 min-w-[80px] px-3 py-2 bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white rounded-lg text-sm font-medium transition-all duration-300 ease-in-out transform hover:scale-105 shadow-md hover:shadow-lg text-center"
+                        >
+                          Edit
+                        </Link>
+                        <Link
+                          to={`/courses/${course.id}/status`}
+                          className="flex-1 min-w-[80px] px-3 py-2 bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 text-white rounded-lg text-sm font-medium transition-all duration-300 ease-in-out transform hover:scale-105 shadow-md hover:shadow-lg text-center"
+                        >
+                          Status
+                        </Link>
+                        <button
+                          onClick={() => alert(`Fitur hapus untuk kursus ${course.title} belum diimplementasikan.`)}
+                          className="flex-1 min-w-[80px] px-3 py-2 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white rounded-lg text-sm font-medium transition-all duration-300 ease-in-out transform hover:scale-105 shadow-md hover:shadow-lg text-center"
+                        >
+                          Hapus
+                        </button>
+                      </>
+                    )}
+
+                    {user?.role === 'INSTRUCTOR' && (
+                      <Link
+                        to={`/payouts/course/${course.id}/balance`}
+                        className="w-full px-4 py-2 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white rounded-lg text-sm font-medium transition-all duration-300 ease-in-out transform hover:scale-105 shadow-md hover:shadow-lg text-center mt-2"
+                      >
+                        💰 Detail Payout
+                      </Link>
+                    )}
+
+                    {user?.role === 'STUDENT' && (
+                      <>
+                        {!isEnrolled ? (
+                          // Button untuk enroll baru
+                          <button
+                            onClick={async () => {
+                              try {
+                                const res = await enrollAPI.enrollCourse(course.id);
+                                const enrollmentId = res.data.enrollment?.id;
+                                const needPayment = res.data.needsPayment;
+
+                                if (enrollmentId && needPayment) {
+                                  navigate(`/enrollments/${enrollmentId}/payment`);
+                                } else {
+                                  alert(res.data.message || 'Enrollment berhasil');
+                                  // Refresh enrollment data setelah enroll
+                                  fetchUserEnrollments();
+                                }
+                              } catch (error) {
+                                console.error('Enroll failed:', error);
+                                alert('Gagal enroll course');
+                              }
+                            }}
+                            className="w-full px-4 py-3 bg-gradient-to-r from-teal-500 to-teal-600 hover:from-teal-600 hover:to-teal-700 text-white rounded-lg text-sm font-semibold transition-all duration-300 ease-in-out transform hover:scale-105 shadow-md hover:shadow-lg mt-2 flex items-center justify-center"
+                          >
+                            <FaGraduationCap className="mr-2" />
+                            Enroll Sekarang
+                          </button>
+                        ) : isPaid ? (
+                          // Button untuk mulai belajar jika sudah dibayar
+                          <Link
+                            to={`/courses/${course.id}/lessons`}
+                            className="w-full px-4 py-3 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white rounded-lg text-sm font-semibold transition-all duration-300 ease-in-out transform hover:scale-105 shadow-md hover:shadow-lg mt-2 flex items-center justify-center"
+                          >
+                            <FaPlay className="mr-2" />
+                            Mulai Belajar
+                          </Link>
+                        ) : isPending ? (
+                          // Button untuk melanjutkan pembayaran
+                          <Link
+                            to={`/enrollments/${enrollmentStatus.id}/payment`}
+                            className="w-full px-4 py-3 bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 text-white rounded-lg text-sm font-semibold transition-all duration-300 ease-in-out transform hover:scale-105 shadow-md hover:shadow-lg mt-2 flex items-center justify-center"
+                          >
+                            <FaDollarSign className="mr-2" />
+                            Lanjutkan Pembayaran
+                          </Link>
+                        ) : (
+                          // Fallback button untuk status enrolled tapi belum jelas pembayarannya
+                          <button disabled className="w-full px-4 py-3 bg-gray-500 text-white rounded-lg text-sm font-semibold mt-2 flex items-center justify-center cursor-not-allowed opacity-60">
+                            <FaCheckCircle className="mr-2" />
+                            Sudah Terdaftar
+                          </button>
+                        )}
+                      </>
+                    )}
+                  </div>
+                </div>
               </div>
-
-              {/* Tombol Aksi per Kursus */}
-              <div className="flex flex-wrap gap-3 mt-6 justify-start">
-                {(user?.role === 'STUDENT' || user?.role === 'ADMIN' || user?.role === 'INSTRUCTOR') && (
-                  <Link
-                    to={`/courses/${course.id}`}
-                    className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md text-sm font-medium transition duration-300 ease-in-out transform hover:scale-105 shadow-md"
-                  >
-                    Detail
-                  </Link>
-                )}
-
-                {(user?.role === 'ADMIN' || user?.role === 'INSTRUCTOR') && (
-                  <>
-                    <Link
-                      to={`/courses/${course.id}/edit`}
-                      className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-md text-sm font-medium transition duration-300 ease-in-out transform hover:scale-105 shadow-md"
-                    >
-                      Edit
-                    </Link>
-                    <Link
-                      to={`/courses/${course.id}/status`}
-                      className="px-4 py-2 bg-yellow-600 hover:bg-yellow-700 text-white rounded-md text-sm font-medium transition duration-300 ease-in-out transform hover:scale-105 shadow-md"
-                    >
-                      Perbarui Status
-                    </Link>
-                    {/* Placeholder for delete, consider using a modal for confirmation */}
-                    <button
-                      onClick={() => alert(`Fitur hapus untuk kursus ${course.title} belum diimplementasikan.`)}
-                      className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-md text-sm font-medium transition duration-300 ease-in-out transform hover:scale-105 shadow-md"
-                    >
-                      Hapus
-                    </button>
-                  </>
-                )}
-
-                {(user?.role === 'INSTRUCTOR') && (
-                  <Link
-                    to={`/payouts/course/${course.id}/balance`}
-                    className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-md text-sm font-medium transition duration-300 ease-in-out transform hover:scale-105 shadow-md"
-                  >
-                    Detail Payout
-                  </Link>
-                )}
-
-                {user?.role === 'STUDENT' && (
-                  <button
-                    onClick={async () => {
-                      try {
-                        const res = await enrollAPI.enrollCourse(course.id);
-                        const enrollmentId = res.data.enrollment?.id;
-                        const needPayment = res.data.needsPayment;
-
-                        if (enrollmentId && needPayment) {
-                          navigate(`/enrollments/${enrollmentId}/payment`);
-                        } else {
-                          // Optional: show a message or refresh course list
-                          alert(res.data.message || 'Enrollment berhasil');
-                        }
-                      } catch (error) {
-                        console.error('Enroll failed:', error);
-                        alert('Gagal enroll course');
-                      }
-                    }}
-                    className="px-4 py-2 bg-teal-600 hover:bg-teal-700 text-white rounded-md text-sm font-medium transition duration-300 ease-in-out transform hover:scale-105 shadow-md"
-                  >
-                    Enroll
-                  </button>
-                )}
-
-              </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
 
-        {/* Pagination */}
+        {/* Enhanced Pagination */}
         {pagination && (
-          <div className="mt-10 flex justify-center items-center gap-4 text-gray-800 dark:text-gray-200">
-            <button
-              disabled={!pagination.hasPrevPage}
-              // onClick={() => { /* logika fetch halaman sebelumnya */ }}
-              className={`px-6 py-3 rounded-lg font-semibold transition duration-300 ease-in-out ${pagination.hasPrevPage ? 'bg-indigo-600 hover:bg-indigo-700 text-white shadow-md' : 'bg-gray-300 dark:bg-gray-700 text-gray-500 dark:text-gray-400 cursor-not-allowed'}`}
-            >
-              Sebelumnya
-            </button>
-            <span className="text-lg font-medium">
-              Halaman {pagination.currentPage} dari {pagination.totalPages}
-            </span>
-            <button
-              disabled={!pagination.hasNextPage}
-              // onClick={() => { /* logika fetch halaman selanjutnya */ }}
-              className={`px-6 py-3 rounded-lg font-semibold transition duration-300 ease-in-out ${pagination.hasNextPage ? 'bg-indigo-600 hover:bg-indigo-700 text-white shadow-md' : 'bg-gray-300 dark:bg-gray-700 text-gray-500 dark:text-gray-400 cursor-not-allowed'}`}
-            >
-              Selanjutnya
-            </button>
+          <div className="mt-16 flex flex-col items-center space-y-4">
+            <div className="flex items-center gap-6 bg-white dark:bg-gray-800 px-8 py-4 rounded-2xl shadow-lg border border-gray-100 dark:border-gray-700">
+              <button
+                disabled={!pagination.hasPrevPage}
+                className={`flex items-center px-6 py-3 rounded-xl font-semibold transition-all duration-300 ease-in-out ${
+                  pagination.hasPrevPage
+                    ? 'bg-gradient-to-r from-indigo-500 to-purple-500 hover:from-indigo-600 hover:to-purple-600 text-white shadow-md hover:shadow-lg transform hover:scale-105'
+                    : 'bg-gray-100 dark:bg-gray-700 text-gray-400 dark:text-gray-500 cursor-not-allowed'
+                }`}
+              >
+                ← Sebelumnya
+              </button>
+
+              <div className="text-center">
+                <div className="text-lg font-bold text-gray-800 dark:text-gray-200">Halaman {pagination.currentPage}</div>
+                <div className="text-sm text-gray-500 dark:text-gray-400">dari {pagination.totalPages} halaman</div>
+              </div>
+
+              <button
+                disabled={!pagination.hasNextPage}
+                className={`flex items-center px-6 py-3 rounded-xl font-semibold transition-all duration-300 ease-in-out ${
+                  pagination.hasNextPage
+                    ? 'bg-gradient-to-r from-indigo-500 to-purple-500 hover:from-indigo-600 hover:to-purple-600 text-white shadow-md hover:shadow-lg transform hover:scale-105'
+                    : 'bg-gray-100 dark:bg-gray-700 text-gray-400 dark:text-gray-500 cursor-not-allowed'
+                }`}
+              >
+                Selanjutnya →
+              </button>
+            </div>
           </div>
         )}
       </div>
