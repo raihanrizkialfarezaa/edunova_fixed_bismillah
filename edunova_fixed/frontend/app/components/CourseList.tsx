@@ -6,7 +6,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import axiosInstance from '../lib/axios';
 // import { Dialog } from '@headlessui/react';
-import { FaSpinner, FaExclamationCircle, FaPlusCircle, FaStar, FaUsers, FaClock, FaBookOpen, FaGraduationCap, FaDollarSign, FaTags, FaUser, FaCheckCircle, FaHourglassHalf, FaPlay } from 'react-icons/fa'; // Untuk loading/error dan tombol create
+import { FaSpinner, FaExclamationCircle, FaPlusCircle, FaStar, FaUsers, FaClock, FaBookOpen, FaGraduationCap, FaDollarSign, FaTags, FaUser, FaCheckCircle, FaHourglassHalf, FaPlay, FaSignInAlt, FaEye } from 'react-icons/fa'; // Tambah FaSignInAlt dan FaEye
 
 export default function CoursesList() {
   const [courses, setCourses] = useState<any[]>([]);
@@ -14,7 +14,7 @@ export default function CoursesList() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(''); // Tambahkan state error
   const [userEnrollments, setUserEnrollments] = useState<any[]>([]); // State untuk menyimpan enrollment user
-  const { user } = useAuth();
+  const { user, isAuthenticated } = useAuth(); // Tambah isAuthenticated
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -31,11 +31,11 @@ export default function CoursesList() {
       })
       .finally(() => setLoading(false));
 
-    // Fetch user enrollments jika user adalah STUDENT
-    if (user?.role === 'STUDENT') {
+    // Fetch user enrollments jika user adalah STUDENT dan sudah login
+    if (isAuthenticated && user?.role === 'STUDENT') {
       fetchUserEnrollments();
     }
-  }, [user]);
+  }, [user, isAuthenticated]);
 
   const fetchUserEnrollments = async () => {
     try {
@@ -85,8 +85,13 @@ export default function CoursesList() {
     );
   }
 
-  // Filter kursus berdasarkan peran pengguna
+  // Filter kursus berdasarkan peran pengguna atau tampilkan semua jika belum login
   const filteredCourses = courses.filter((course) => {
+    if (!isAuthenticated) {
+      // Jika belum login, tampilkan semua kursus yang PUBLISHED
+      return course.status === 'PUBLISHED';
+    }
+
     if (user?.role === 'INSTRUCTOR') {
       return course.instructorId === user.id;
     }
@@ -104,14 +109,31 @@ export default function CoursesList() {
             <FaBookOpen className="text-4xl text-indigo-600 dark:text-indigo-400" />
           </div>
           <h3 className="text-2xl font-bold text-gray-800 dark:text-gray-200 mb-4">Belum Ada Kursus</h3>
-          <p className="text-gray-600 dark:text-gray-400 mb-6">Mulai perjalanan belajar Anda dengan membuat kursus pertama</p>
-          {user?.role === 'INSTRUCTOR' && (
-            <Link
-              to="/course/create"
-              className="inline-flex items-center px-8 py-4 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white rounded-xl font-semibold transition-all duration-300 ease-in-out transform hover:scale-105 shadow-lg hover:shadow-xl"
-            >
-              <FaPlusCircle className="mr-3 text-lg" /> Buat Kursus Premium
-            </Link>
+          <p className="text-gray-600 dark:text-gray-400 mb-6">{!isAuthenticated ? 'Belum ada kursus tersedia saat ini. Silakan login untuk mengakses lebih banyak fitur.' : 'Mulai perjalanan belajar Anda dengan membuat kursus pertama'}</p>
+          {!isAuthenticated ? (
+            <div className="space-y-3">
+              <Link
+                to="/login"
+                className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white rounded-xl font-semibold transition-all duration-300 ease-in-out transform hover:scale-105 shadow-lg hover:shadow-xl"
+              >
+                <FaSignInAlt className="mr-2" /> Masuk
+              </Link>
+              <Link
+                to="/register"
+                className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white rounded-xl font-semibold transition-all duration-300 ease-in-out transform hover:scale-105 shadow-lg hover:shadow-xl ml-3"
+              >
+                <FaPlusCircle className="mr-2" /> Daftar
+              </Link>
+            </div>
+          ) : (
+            user?.role === 'INSTRUCTOR' && (
+              <Link
+                to="/course/create"
+                className="inline-flex items-center px-8 py-4 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white rounded-xl font-semibold transition-all duration-300 ease-in-out transform hover:scale-105 shadow-lg hover:shadow-xl"
+              >
+                <FaPlusCircle className="mr-3 text-lg" /> Buat Kursus Premium
+              </Link>
+            )
           )}
         </div>
       </div>
@@ -120,6 +142,26 @@ export default function CoursesList() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-indigo-900">
+      {/* Login prompt untuk user belum login */}
+      {!isAuthenticated && (
+        <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-4">
+          <div className="max-w-7xl mx-auto px-6 text-center">
+            <p className="text-lg font-semibold mb-2">🎓 Dapatkan akses penuh ke semua fitur kursus!</p>
+            <p className="text-blue-100 mb-4">Login sekarang untuk bergabung dengan kelas, mengikuti kuis, dan mendapatkan sertifikat</p>
+            <div className="space-x-4">
+              <Link to="/login" className="inline-flex items-center px-6 py-2 bg-white text-blue-600 rounded-lg font-semibold hover:bg-gray-100 transition-colors duration-300">
+                <FaSignInAlt className="mr-2" />
+                Masuk
+              </Link>
+              <Link to="/register" className="inline-flex items-center px-6 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg font-semibold transition-colors duration-300">
+                <FaPlusCircle className="mr-2" />
+                Daftar Gratis
+              </Link>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Hero Section */}
       <div className="relative overflow-hidden bg-gradient-to-r from-indigo-600 via-purple-600 to-indigo-800 dark:from-indigo-800 dark:via-purple-800 dark:to-indigo-900">
         <div className="absolute inset-0 bg-black opacity-10"></div>
@@ -128,7 +170,11 @@ export default function CoursesList() {
             Kursus Premium
             <span className="block text-3xl md:text-4xl font-light mt-2 text-indigo-200">Tingkatkan Karir Anda</span>
           </h1>
-          <p className="text-xl text-indigo-100 max-w-3xl mx-auto mb-8 leading-relaxed">Bergabunglah dengan ribuan profesional yang telah meningkatkan karir mereka melalui kursus berkualitas tinggi dari instruktur terbaik</p>
+          <p className="text-xl text-indigo-100 max-w-3xl mx-auto mb-8 leading-relaxed">
+            {!isAuthenticated
+              ? 'Jelajahi ribuan kursus berkualitas tinggi. Daftar sekarang untuk mengakses semua fitur pembelajaran!'
+              : 'Bergabunglah dengan ribuan profesional yang telah meningkatkan karir mereka melalui kursus berkualitas tinggi dari instruktur terbaik'}
+          </p>
 
           {/* Stats */}
           <div className="flex flex-wrap justify-center gap-8 mt-12">
@@ -151,8 +197,8 @@ export default function CoursesList() {
       </div>
 
       <div className="max-w-7xl mx-auto px-6 py-12">
-        {/* Tombol Create */}
-        {user?.role === 'INSTRUCTOR' && (
+        {/* Tombol Create - hanya untuk INSTRUCTOR yang sudah login */}
+        {isAuthenticated && user?.role === 'INSTRUCTOR' && (
           <div className="mb-12 text-center">
             <Link
               to="/course/create"
@@ -198,8 +244,8 @@ export default function CoursesList() {
                     </span>
                   </div>
 
-                  {/* Enrollment Status Badge */}
-                  {user?.role === 'STUDENT' && isEnrolled && (
+                  {/* Enrollment Status Badge - hanya untuk user yang sudah login */}
+                  {isAuthenticated && user?.role === 'STUDENT' && isEnrolled && (
                     <div className="absolute bottom-4 left-4">
                       <span
                         className={`px-3 py-1 rounded-full text-xs font-semibold flex items-center ${
@@ -208,6 +254,16 @@ export default function CoursesList() {
                       >
                         <FaCheckCircle className="mr-1" />
                         {isPaid ? 'Enrolled' : 'Payment Pending'}
+                      </span>
+                    </div>
+                  )}
+
+                  {/* Preview Badge untuk user belum login */}
+                  {!isAuthenticated && (
+                    <div className="absolute bottom-4 left-4">
+                      <span className="px-3 py-1 rounded-full text-xs font-semibold flex items-center bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-200">
+                        <FaEye className="mr-1" />
+                        Preview Mode
                       </span>
                     </div>
                   )}
@@ -247,16 +303,17 @@ export default function CoursesList() {
 
                   {/* Action Buttons */}
                   <div className="flex flex-wrap gap-2 mt-auto">
-                    {(user?.role === 'STUDENT' || user?.role === 'ADMIN' || user?.role === 'INSTRUCTOR') && (
-                      <Link
-                        to={`/courses/${course.id}`}
-                        className="flex-1 min-w-[100px] px-4 py-2 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white rounded-lg text-sm font-medium transition-all duration-300 ease-in-out transform hover:scale-105 shadow-md hover:shadow-lg text-center"
-                      >
-                        Detail
-                      </Link>
-                    )}
+                    {/* Detail Button - tersedia untuk semua user termasuk yang belum login */}
+                    <Link
+                      to={`/courses/${course.id}`}
+                      className="flex-1 min-w-[100px] px-4 py-2 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white rounded-lg text-sm font-medium transition-all duration-300 ease-in-out transform hover:scale-105 shadow-md hover:shadow-lg text-center"
+                    >
+                      <FaEye className="inline mr-1" />
+                      {!isAuthenticated ? 'Lihat Detail' : 'Detail'}
+                    </Link>
 
-                    {(user?.role === 'ADMIN' || user?.role === 'INSTRUCTOR') && (
+                    {/* Buttons untuk user yang sudah login */}
+                    {isAuthenticated && (user?.role === 'ADMIN' || user?.role === 'INSTRUCTOR') && (
                       <>
                         <Link
                           to={`/courses/${course.id}/edit`}
@@ -279,7 +336,7 @@ export default function CoursesList() {
                       </>
                     )}
 
-                    {user?.role === 'INSTRUCTOR' && (
+                    {isAuthenticated && user?.role === 'INSTRUCTOR' && (
                       <Link
                         to={`/payouts/course/${course.id}/balance`}
                         className="w-full px-4 py-2 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white rounded-lg text-sm font-medium transition-all duration-300 ease-in-out transform hover:scale-105 shadow-md hover:shadow-lg text-center mt-2"
@@ -288,7 +345,8 @@ export default function CoursesList() {
                       </Link>
                     )}
 
-                    {user?.role === 'STUDENT' && (
+                    {/* Buttons untuk STUDENT yang sudah login */}
+                    {isAuthenticated && user?.role === 'STUDENT' && (
                       <>
                         {!isEnrolled ? (
                           // Button untuk enroll baru
@@ -342,6 +400,26 @@ export default function CoursesList() {
                           </button>
                         )}
                       </>
+                    )}
+
+                    {/* CTA untuk user belum login */}
+                    {!isAuthenticated && (
+                      <div className="w-full mt-2 space-y-2">
+                        <Link
+                          to="/register"
+                          className="w-full px-4 py-3 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white rounded-lg text-sm font-semibold transition-all duration-300 ease-in-out transform hover:scale-105 shadow-md hover:shadow-lg flex items-center justify-center"
+                        >
+                          <FaGraduationCap className="mr-2" />
+                          Daftar untuk Bergabung
+                        </Link>
+                        <Link
+                          to="/login"
+                          className="w-full px-4 py-2 bg-gradient-to-r from-gray-600 to-gray-700 hover:from-gray-700 hover:to-gray-800 text-white rounded-lg text-sm font-medium transition-all duration-300 ease-in-out transform hover:scale-105 shadow-md hover:shadow-lg flex items-center justify-center"
+                        >
+                          <FaSignInAlt className="mr-2" />
+                          Sudah Punya Akun?
+                        </Link>
+                      </div>
                     )}
                   </div>
                 </div>
