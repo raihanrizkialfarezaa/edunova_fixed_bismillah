@@ -72,6 +72,20 @@ interface Assignment {
   };
 }
 
+// Add this utility function at the top of the component
+const formatDate = (dateString: string | null | undefined): string => {
+  if (!dateString) return 'Tanggal tidak tersedia';
+
+  const date = new Date(dateString);
+  if (isNaN(date.getTime())) return 'Tanggal tidak valid';
+
+  return date.toLocaleDateString('id-ID', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  });
+};
+
 interface Enrollment {
   id: number;
   course: {
@@ -80,7 +94,7 @@ interface Enrollment {
     price: number;
     description?: string;
   };
-  enrolledAt: string;
+  createdAt: string; // Use createdAt instead of enrolledAt
 }
 
 export default function Home() {
@@ -329,7 +343,7 @@ export default function Home() {
                                   <CalendarIcon className="h-5 w-5 text-emerald-400" />
                                   <div>
                                     <p className="text-xs text-gray-400 uppercase tracking-wide">Terdaftar</p>
-                                    <p className="text-sm font-medium text-white">{new Date(enrollment.enrolledAt).toLocaleDateString('id-ID')}</p>
+                                    <p className="text-sm font-medium text-white">{formatDate(enrollment.createdAt)}</p>
                                   </div>
                                 </div>
                                 <div className="flex items-center gap-3 p-3 bg-gray-800/50 rounded-xl">

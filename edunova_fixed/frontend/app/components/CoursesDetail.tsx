@@ -254,7 +254,7 @@ export default function DetailCourse() {
                                 </div>
                                 <div className="flex items-center gap-2 text-sm text-gray-400">
                                   <FaClock />
-                                  <span>{Math.floor(lesson.duration / 60)} menit</span>
+                                  <span>{lesson.duration ? (lesson.duration >= 60 ? `${Math.floor(lesson.duration / 60)} menit` : `${lesson.duration} detik`) : 'Durasi tidak tersedia'}</span>
                                 </div>
                               </li>
                             ))}
