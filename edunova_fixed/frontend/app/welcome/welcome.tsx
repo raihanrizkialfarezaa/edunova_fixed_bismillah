@@ -785,7 +785,7 @@ export function Welcome() {
           </div>
 
           <div className="pt-8 border-t border-gray-800 text-center">
-            <p className="text-gray-500 text-lg">&copy; 2024 EduNova Indonesia. Seluruh hak cipta dilindungi undang-undang.</p>
+            <p className="text-gray-500 text-lg">&copy; 2025 EduNova Indonesia "RizkiGroups ". Project iseng semoga tetap keep up to date.</p>
             <p className="text-gray-600 text-sm mt-2">Dibuat dengan ❤️ untuk masa depan pendidikan Indonesia</p>
           </div>
         </div>
