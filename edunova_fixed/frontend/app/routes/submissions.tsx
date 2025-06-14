@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import axiosInstance from '../lib/axios';
+import { FaClipboardList, FaFileAlt, FaQuestionCircle, FaTrophy, FaClock, FaCheckCircle, FaExclamationTriangle, FaSpinner, FaDownload, FaEdit, FaSave, FaTimes, FaFilter, FaGraduationCap, FaCrown, FaSearch } from 'react-icons/fa';
 
 interface Submission {
   id: number;
@@ -135,11 +136,11 @@ export default function Submissions() {
           setSubmissions(normalizedSubmissions);
         } catch (fallbackError) {
           console.error('Fallback request also failed:', fallbackError);
-          setError('Gagal mengambil data submissions. Endpoint mungkin tidak tersedia.');
+          setError('Gagal mengambil data pengumpulan. Endpoint mungkin tidak tersedia.');
           setSubmissions([]);
         }
       } else {
-        setError(error.response?.data?.message || 'Gagal mengambil data submissions');
+        setError(error.response?.data?.message || 'Gagal mengambil data pengumpulan');
         setSubmissions([]);
       }
     } finally {
@@ -154,36 +155,72 @@ export default function Submissions() {
         feedback,
       });
       fetchSubmissions();
-      alert('Penyerahan berhasil dinilai');
+      alert('pengumpulan berhasil dinilai');
     } catch (error: any) {
       console.error('Failed to grade submission:', error);
-      alert(error.response?.data?.message || 'Gagal menilai penyerahan');
+      alert(error.response?.data?.message || 'Gagal menilai pengumpulan');
     }
   };
 
-  if (loading)
+  const getPageTitle = () => {
+    switch (user?.role) {
+      case 'ADMIN':
+        return 'Semua pengumpulan';
+      case 'INSTRUCTOR':
+        return 'Penilaian pengumpulan';
+      default:
+        return 'Pengumpulan Saya';
+    }
+  };
+
+  if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-gray-950 text-white font-sans">
-        <p className="text-lg animate-pulse">Memuat...</p>
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-gray-900 to-slate-800 flex items-center justify-center">
+        <div className="text-center">
+          <div className="relative mx-auto mb-6 w-20 h-20">
+            <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full animate-pulse"></div>
+            <div className="absolute inset-2 bg-gray-800 rounded-full flex items-center justify-center">
+              <FaSpinner className="text-3xl text-blue-400 animate-spin" />
+            </div>
+          </div>
+          <p className="text-blue-300 text-xl font-medium">Memuat pengumpulan...</p>
+        </div>
       </div>
     );
+  }
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gray-950 text-gray-100 font-sans p-8">
-        <div className="max-w-6xl mx-auto bg-gray-900 p-8 rounded-xl shadow-lg border border-gray-800">
-          <h1 className="text-3xl font-extrabold text-blue-400 mb-6">{user?.role === 'ADMIN' ? 'Semua Penyerahan' : user?.role === 'INSTRUCTOR' ? 'Nilai Penyerahan' : 'Penyerahan Saya'}</h1>
-          <div className="bg-red-900 bg-opacity-30 text-red-400 p-6 rounded-lg text-center border border-red-700">
-            <p className="text-lg mb-4">{error}</p>
-            <button
-              onClick={() => {
-                setError(null);
-                fetchSubmissions();
-              }}
-              className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition-colors"
-            >
-              Coba Lagi
-            </button>
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-gray-900 to-slate-800">
+        <div className="absolute inset-0 bg-gradient-to-r from-blue-600/10 via-purple-600/10 to-teal-600/10 pointer-events-none"></div>
+
+        <div className="relative z-10 p-6 pt-12">
+          <div className="max-w-5xl mx-auto">
+            <div className="text-center mb-12">
+              <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-r from-red-500 to-pink-600 rounded-full mb-6 shadow-lg">
+                <FaExclamationTriangle className="text-3xl text-white" />
+              </div>
+              <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-red-400 via-pink-400 to-red-400 bg-clip-text text-transparent mb-4">{getPageTitle()}</h1>
+            </div>
+
+            <div className="bg-gray-800/60 backdrop-blur-xl rounded-2xl shadow-2xl border border-gray-700/50 overflow-hidden">
+              <div className="p-8">
+                <div className="bg-gradient-to-r from-red-900/20 to-pink-900/20 text-red-300 p-6 rounded-xl border border-red-700/50 backdrop-blur-sm text-center">
+                  <FaExclamationTriangle className="text-4xl text-red-400 mx-auto mb-4" />
+                  <p className="text-xl font-medium mb-4">{error}</p>
+                  <button
+                    onClick={() => {
+                      setError(null);
+                      fetchSubmissions();
+                    }}
+                    className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-red-600 to-pink-600 text-white rounded-xl shadow-lg hover:from-red-700 hover:to-pink-700 transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-red-500/50 font-semibold"
+                  >
+                    <FaSpinner className="mr-2" />
+                    Coba Lagi
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -192,13 +229,29 @@ export default function Submissions() {
 
   if (submissions.length === 0) {
     return (
-      <div className="min-h-screen bg-gray-950 text-gray-100 font-sans p-8">
-        <div className="max-w-6xl mx-auto bg-gray-900 p-8 rounded-xl shadow-lg border border-gray-800">
-          <h1 className="text-3xl font-extrabold text-blue-400 mb-6">{user?.role === 'ADMIN' ? 'Semua Penyerahan' : user?.role === 'INSTRUCTOR' ? 'Nilai Penyerahan' : 'Penyerahan Saya'}</h1>
-          <div className="bg-gray-800 rounded-lg shadow p-8 text-center border border-gray-700">
-            <p className="text-gray-400 text-lg mb-2">Tidak ada penyerahan ditemukan.</p>
-            {user?.role === 'STUDENT' && <p className="text-sm text-gray-500 mt-2">Ikuti beberapa kuis atau kirimkan tugas untuk melihatnya di sini.</p>}
-            {(filter.type || filter.status) && <p className="text-sm text-gray-500 mt-4">(Tidak ada hasil untuk filter saat ini. Coba ubah filter Anda.)</p>}
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-gray-900 to-slate-800">
+        <div className="absolute inset-0 bg-gradient-to-r from-blue-600/10 via-purple-600/10 to-teal-600/10 pointer-events-none"></div>
+
+        <div className="relative z-10 p-6 pt-12">
+          <div className="max-w-5xl mx-auto">
+            <div className="text-center mb-12">
+              <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-r from-gray-500 to-gray-600 rounded-full mb-6 shadow-lg">
+                <FaClipboardList className="text-3xl text-white" />
+              </div>
+              <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-blue-400 via-purple-400 to-teal-400 bg-clip-text text-transparent mb-4">{getPageTitle()}</h1>
+            </div>
+
+            <div className="bg-gray-800/60 backdrop-blur-xl rounded-2xl shadow-2xl border border-gray-700/50 overflow-hidden">
+              <div className="p-8 text-center">
+                <div className="w-24 h-24 bg-gradient-to-r from-gray-600 to-gray-700 rounded-full flex items-center justify-center mx-auto mb-6">
+                  <FaClipboardList className="text-4xl text-gray-400" />
+                </div>
+                <h3 className="text-2xl font-bold text-gray-300 mb-4">Tidak Ada pengumpulan</h3>
+                <p className="text-gray-400 text-lg mb-4">{user?.role === 'STUDENT' ? 'Anda belum memiliki pengumpulan tugas atau kuis.' : 'Belum ada pengumpulan dari siswa.'}</p>
+                {user?.role === 'STUDENT' && <p className="text-sm text-gray-500">Ikuti beberapa kuis atau kirimkan tugas untuk melihatnya di sini.</p>}
+                {(filter.type || filter.status) && <p className="text-sm text-gray-500 mt-4">Tidak ada hasil untuk filter saat ini. Coba ubah filter Anda.</p>}
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -206,82 +259,94 @@ export default function Submissions() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-950 text-gray-100 font-sans p-8">
-      <div className="max-w-6xl mx-auto bg-gray-900 p-8 rounded-xl shadow-lg border border-gray-800">
-        <h1 className="text-3xl font-extrabold text-blue-400 mb-6">{user?.role === 'ADMIN' ? 'Semua Penyerahan' : user?.role === 'INSTRUCTOR' ? 'Nilai Penyerahan' : 'Penyerahan Saya'}</h1>
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-gray-900 to-slate-800">
+      <div className="absolute inset-0 bg-gradient-to-r from-blue-600/10 via-purple-600/10 to-teal-600/10 pointer-events-none"></div>
+      <div className="absolute top-0 left-0 w-full h-32 bg-gradient-to-b from-blue-900/20 to-transparent pointer-events-none"></div>
 
-        <div className="bg-gray-800 rounded-lg shadow border border-gray-700 mb-6">
-          <div className="p-4 border-b border-gray-700 flex flex-col sm:flex-row gap-4">
-            <label htmlFor="type-filter" className="sr-only">
-              Filter Berdasarkan Tipe
-            </label>
-            <select
-              id="type-filter"
-              value={filter.type}
-              onChange={(e) => setFilter({ ...filter, type: e.target.value })}
-              className="border border-gray-600 rounded px-4 py-2 bg-gray-700 text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              <option value="">Semua Tipe</option>
-              <option value="quiz">Kuis</option>
-              <option value="assignment">Tugas</option>
-            </select>
-
-            <label htmlFor="status-filter" className="sr-only">
-              Filter Berdasarkan Status
-            </label>
-            <select
-              id="status-filter"
-              value={filter.status}
-              onChange={(e) => setFilter({ ...filter, status: e.target.value })}
-              className="border border-gray-600 rounded px-4 py-2 bg-gray-700 text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              <option value="">Semua Status</option>
-              <option value="SUBMITTED">Diserahkan</option>
-              <option value="GRADED">Dinilai</option>
-              <option value="LATE_SUBMITTED">Terlambat</option>
-            </select>
+      <div className="relative z-10 p-6 pt-12">
+        <div className="max-w-7xl mx-auto">
+          {/* Header Section */}
+          <div className="text-center mb-12">
+            <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full mb-6 shadow-lg">
+              <FaClipboardList className="text-3xl text-white" />
+            </div>
+            <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-blue-400 via-purple-400 to-teal-400 bg-clip-text text-transparent mb-4">{getPageTitle()}</h1>
+            <p className="text-xl text-gray-300 max-w-2xl mx-auto">{user?.role === 'STUDENT' ? 'Kelola dan pantau semua pengumpulan tugas dan kuis Anda' : 'Kelola dan berikan penilaian untuk pengumpulan siswa'}</p>
           </div>
 
-          <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-700">
-              <thead className="bg-gray-700">
-                <tr>
-                  <th scope="col" className="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
-                    Tipe
-                  </th>
-                  <th scope="col" className="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
-                    Judul
-                  </th>
-                  <th scope="col" className="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
-                    Kursus
-                  </th>
-                  {(user?.role === 'ADMIN' || user?.role === 'INSTRUCTOR') && (
-                    <th scope="col" className="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
-                      Siswa
-                    </th>
-                  )}
-                  <th scope="col" className="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
-                    Nilai
-                  </th>
-                  <th scope="col" className="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
-                    Status
-                  </th>
-                  <th scope="col" className="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
-                    Diserahkan
-                  </th>
-                  {(user?.role === 'INSTRUCTOR' || user?.role === 'ADMIN') && (
-                    <th scope="col" className="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
-                      Aksi
-                    </th>
-                  )}
-                </tr>
-              </thead>
-              <tbody className="bg-gray-800 divide-y divide-gray-700">
-                {submissions.map((submission) => (
-                  <SubmissionRow key={submission.id} submission={submission} userRole={user?.role || 'STUDENT'} onGrade={gradeSubmission} />
-                ))}
-              </tbody>
-            </table>
+          {/* Main Content Container */}
+          <div className="bg-gray-800/60 backdrop-blur-xl rounded-2xl shadow-2xl border border-gray-700/50 overflow-hidden">
+            {/* Header dengan Stats */}
+            <div className="bg-gradient-to-r from-blue-600/20 via-purple-600/20 to-teal-600/20 px-8 py-6 border-b border-gray-700/50">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-3">
+                  <FaCrown className="text-2xl text-yellow-400" />
+                  <h2 className="text-2xl font-bold text-white">Dashboard pengumpulan</h2>
+                </div>
+                <div className="flex items-center space-x-4">
+                  <div className="text-sm text-gray-300 bg-gray-700/50 px-4 py-2 rounded-full">{submissions.length} Total pengumpulan</div>
+                  <div className="text-sm text-green-300 bg-green-900/30 px-4 py-2 rounded-full">{submissions.filter((s) => s.status === 'GRADED').length} Dinilai</div>
+                </div>
+              </div>
+            </div>
+
+            {/* Filters */}
+            <div className="bg-gray-700/30 px-8 py-6 border-b border-gray-700/50">
+              <div className="flex items-center space-x-3 mb-4">
+                <FaFilter className="text-lg text-blue-400" />
+                <h3 className="text-lg font-semibold text-white">Filter pengumpulan</h3>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Tipe pengumpulan</label>
+                  <select
+                    value={filter.type}
+                    onChange={(e) => setFilter({ ...filter, type: e.target.value })}
+                    className="w-full bg-gray-700/80 border border-gray-600 rounded-xl px-4 py-3 text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                  >
+                    <option value="">Semua Tipe</option>
+                    <option value="quiz">Kuis</option>
+                    <option value="assignment">Tugas</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Status pengumpulan</label>
+                  <select
+                    value={filter.status}
+                    onChange={(e) => setFilter({ ...filter, status: e.target.value })}
+                    className="w-full bg-gray-700/80 border border-gray-600 rounded-xl px-4 py-3 text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                  >
+                    <option value="">Semua Status</option>
+                    <option value="SUBMITTED">Dikirim</option>
+                    <option value="GRADED">Dinilai</option>
+                    <option value="LATE_SUBMITTED">Terlambat</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            {/* Submissions Table */}
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead className="bg-gray-700/50">
+                  <tr>
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-300 uppercase tracking-wider">Tipe</th>
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-300 uppercase tracking-wider">Judul</th>
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-300 uppercase tracking-wider">Kursus</th>
+                    {(user?.role === 'ADMIN' || user?.role === 'INSTRUCTOR') && <th className="px-6 py-4 text-left text-xs font-semibold text-gray-300 uppercase tracking-wider">Siswa</th>}
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-300 uppercase tracking-wider">Nilai</th>
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-300 uppercase tracking-wider">Status</th>
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-300 uppercase tracking-wider">Dikirim</th>
+                    {(user?.role === 'INSTRUCTOR' || user?.role === 'ADMIN') && <th className="px-6 py-4 text-left text-xs font-semibold text-gray-300 uppercase tracking-wider">Aksi</th>}
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-700/50">
+                  {submissions.map((submission) => (
+                    <SubmissionRow key={submission.id} submission={submission} userRole={user?.role || 'STUDENT'} onGrade={gradeSubmission} />
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
       </div>
@@ -321,84 +386,145 @@ function SubmissionRow({ submission, userRole, onGrade }: { submission: Submissi
     setGradeForm({ score: '', feedback: '' });
   };
 
+  const getTypeIcon = (type: string) => {
+    return type === 'quiz' ? <FaQuestionCircle className="mr-2" /> : <FaFileAlt className="mr-2" />;
+  };
+
+  const getStatusColor = (status: string, isLate?: boolean) => {
+    if (status === 'GRADED') return 'from-green-600 to-emerald-600 text-green-100';
+    if (isLate) return 'from-red-600 to-pink-600 text-red-100';
+    return 'from-yellow-600 to-orange-600 text-yellow-100';
+  };
+
+  const getStatusIcon = (status: string, isLate?: boolean) => {
+    if (status === 'GRADED') return <FaCheckCircle className="mr-1" />;
+    if (isLate) return <FaExclamationTriangle className="mr-1" />;
+    return <FaClock className="mr-1" />;
+  };
+
   return (
-    <tr className="hover:bg-gray-700 transition-colors duration-150">
-      <td className="px-4 py-3 whitespace-nowrap">
-        <span className={`px-2 py-1 rounded-full text-xs font-semibold ${submission.type === 'quiz' ? 'bg-blue-900 text-blue-300' : 'bg-green-900 text-green-300'}`}>
-          {submission.type ? submission.type.toUpperCase() : 'TIDAK DIKETAHUI'}
-        </span>
+    <tr className="hover:bg-gray-700/30 transition-all duration-200">
+      <td className="px-6 py-4">
+        <div
+          className={`inline-flex items-center px-3 py-2 rounded-xl text-sm font-semibold shadow-lg ${
+            submission.type === 'quiz' ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-blue-100' : 'bg-gradient-to-r from-green-600 to-emerald-600 text-green-100'
+          }`}
+        >
+          {getTypeIcon(submission.type)}
+          {submission.type === 'quiz' ? 'KUIS' : 'TUGAS'}
+        </div>
       </td>
-      <td className="px-4 py-3 text-gray-200" title={submission.title}>
-        {submission.title}
+      <td className="px-6 py-4">
+        <div className="text-white font-medium truncate max-w-xs" title={submission.title}>
+          {submission.title}
+        </div>
       </td>
-      <td className="px-4 py-3 text-gray-300" title={submission.course?.title}>
-        {submission.course?.title}
+      <td className="px-6 py-4">
+        <div className="text-gray-300 truncate max-w-xs" title={submission.course?.title}>
+          {submission.course?.title}
+        </div>
       </td>
-      {(userRole === 'ADMIN' || userRole === 'INSTRUCTOR') && <td className="px-4 py-3 text-gray-300">{submission.student?.name || 'Siswa Tidak Diketahui'}</td>}
-      <td className="px-4 py-3 text-gray-200">{submission.score !== null && submission.score !== undefined ? `${submission.score}${submission.type === 'quiz' ? '%' : ' poin'}` : '-'}</td>
-      <td className="px-4 py-3 whitespace-nowrap">
-        <span className={`px-2 py-1 rounded-full text-xs font-semibold ${submission.status === 'GRADED' ? 'bg-green-700 text-green-200' : submission.isLate ? 'bg-red-700 text-red-200' : 'bg-yellow-700 text-yellow-200'}`}>
-          {submission.status.replace(/_/g, ' ')}
-        </span>
+      {(userRole === 'ADMIN' || userRole === 'INSTRUCTOR') && (
+        <td className="px-6 py-4">
+          <div className="flex items-center space-x-2">
+            <div className="w-8 h-8 bg-gradient-to-r from-purple-500 to-indigo-500 rounded-full flex items-center justify-center">
+              <FaGraduationCap className="text-white text-sm" />
+            </div>
+            <span className="text-gray-300 font-medium">{submission.student?.name || 'Siswa Tidak Diketahui'}</span>
+          </div>
+        </td>
+      )}
+      <td className="px-6 py-4">
+        {submission.score !== null && submission.score !== undefined ? (
+          <div className="flex items-center space-x-2">
+            <FaTrophy className="text-yellow-400" />
+            <span className="text-white font-bold">
+              {submission.score}
+              {submission.type === 'quiz' ? '%' : ' poin'}
+            </span>
+          </div>
+        ) : (
+          <span className="text-gray-500">-</span>
+        )}
       </td>
-      <td className="px-4 py-3 text-gray-400">
-        {new Date(submission.submittedAt).toLocaleDateString('id-ID', {
-          year: 'numeric',
-          month: 'short',
-          day: 'numeric',
-          hour: '2-digit',
-          minute: '2-digit',
-        })}
+      <td className="px-6 py-4">
+        <div className={`inline-flex items-center px-3 py-2 rounded-xl text-sm font-semibold bg-gradient-to-r shadow-lg ${getStatusColor(submission.status, submission.isLate)}`}>
+          {getStatusIcon(submission.status, submission.isLate)}
+          {submission.status === 'GRADED' ? 'Dinilai' : submission.isLate ? 'Terlambat' : submission.status === 'SUBMITTED' ? 'Dikirim' : submission.status}
+        </div>
+      </td>
+      <td className="px-6 py-4 text-gray-400">
+        <div className="flex items-center space-x-2">
+          <FaClock className="text-blue-400" />
+          <span>
+            {new Date(submission.submittedAt).toLocaleDateString('id-ID', {
+              year: 'numeric',
+              month: 'short',
+              day: 'numeric',
+              hour: '2-digit',
+              minute: '2-digit',
+            })}
+          </span>
+        </div>
       </td>
       {(userRole === 'INSTRUCTOR' || userRole === 'ADMIN') && (
-        <td className="px-4 py-3">
+        <td className="px-6 py-4">
           {submission.status !== 'GRADED' || grading ? (
             grading ? (
-              <div className="flex flex-col space-y-2">
+              <div className="bg-gray-700/50 p-4 rounded-xl border border-gray-600/50 space-y-3">
                 <input
                   type="number"
                   placeholder={submission.type === 'quiz' ? 'Nilai (0-100)' : 'Nilai'}
                   value={gradeForm.score}
                   onChange={(e) => setGradeForm({ ...gradeForm, score: e.target.value })}
-                  className="border border-gray-600 rounded px-2 py-1 text-gray-100 bg-gray-700 w-28 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
+                  className="w-full bg-gray-600/50 border border-gray-500 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
                   min="0"
                   max={submission.type === 'quiz' ? '100' : undefined}
                 />
                 <textarea
-                  placeholder="Umpan balik"
+                  placeholder="Umpan balik untuk siswa..."
                   value={gradeForm.feedback}
                   onChange={(e) => setGradeForm({ ...gradeForm, feedback: e.target.value })}
-                  className="border border-gray-600 rounded px-2 py-1 text-gray-100 bg-gray-700 w-full text-sm resize-y"
-                  rows={2}
+                  className="w-full bg-gray-600/50 border border-gray-500 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+                  rows={3}
                 />
-                <div className="flex gap-1">
-                  <button onClick={handleGrade} className="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded text-xs focus:outline-none transition-colors">
+                <div className="flex gap-2">
+                  <button
+                    onClick={handleGrade}
+                    className="flex-1 inline-flex items-center justify-center px-4 py-2 bg-gradient-to-r from-green-600 to-emerald-600 text-white rounded-lg shadow-lg hover:from-green-700 hover:to-emerald-700 transition-all transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-green-500/50"
+                  >
+                    <FaSave className="mr-2" />
                     Simpan
                   </button>
-                  <button onClick={() => setGrading(false)} className="bg-gray-600 hover:bg-gray-700 text-white px-3 py-1 rounded text-xs focus:outline-none transition-colors">
+                  <button
+                    onClick={() => setGrading(false)}
+                    className="flex-1 inline-flex items-center justify-center px-4 py-2 bg-gradient-to-r from-gray-600 to-gray-700 text-white rounded-lg shadow-lg hover:from-gray-700 hover:to-gray-800 transition-all transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-gray-500/50"
+                  >
+                    <FaTimes className="mr-2" />
                     Batal
                   </button>
                 </div>
               </div>
             ) : (
-              <button onClick={() => setGrading(true)} className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded text-xs focus:outline-none transition-colors">
-                {submission.status === 'GRADED' ? 'Edit Nilai' : 'Nilai'}
+              <button
+                onClick={() => setGrading(true)}
+                className="inline-flex items-center px-4 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-lg shadow-lg hover:from-blue-700 hover:to-indigo-700 transition-all transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500/50 font-medium"
+              >
+                <FaEdit className="mr-2" />
+                {submission.status === 'GRADED' ? 'Edit Nilai' : 'Beri Nilai'}
               </button>
             )
           ) : (
-            <div className="text-green-500 text-sm">
-              <div>Dinilai: {submission.score !== null && submission.score !== undefined ? `${submission.score}${submission.type === 'quiz' ? '%' : ' poin'}` : ''}</div>
-              {submission.feedback && <div className="text-gray-400 text-xs mt-1 italic">{submission.feedback}</div>}
+            <div className="bg-green-900/20 p-4 rounded-xl border border-green-700/50">
+              <div className="flex items-center space-x-2 mb-2">
+                <FaTrophy className="text-yellow-400" />
+                <span className="text-green-300 font-semibold">Dinilai: {submission.score !== null && submission.score !== undefined ? `${submission.score}${submission.type === 'quiz' ? '%' : ' poin'}` : ''}</span>
+              </div>
+              {submission.feedback && <p className="text-gray-300 text-sm bg-gray-700/30 p-2 rounded-lg italic border-l-4 border-blue-500">"{submission.feedback}"</p>}
               {submission.fileUrl && submission.type === 'assignment' && (
-                <a href={submission.fileUrl} target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:underline text-xs mt-1 inline-flex items-center">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 mr-1" viewBox="0 0 20 20" fill="currentColor">
-                    <path
-                      fillRule="evenodd"
-                      d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.414L14.586 5A2 2 0 0115 6.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 10a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1-4a1 1 0 100 2h6a1 1 0 100-2H7z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                  Lihat File
+                <a href={submission.fileUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center mt-2 text-blue-400 hover:text-blue-300 transition-colors">
+                  <FaDownload className="mr-2" />
+                  <span className="underline">Unduh File</span>
                 </a>
               )}
             </div>

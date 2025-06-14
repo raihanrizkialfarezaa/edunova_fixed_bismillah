@@ -1,4 +1,4 @@
-const { Quiz, Question, Option, Lesson, Section, Course, User } = require('../models');
+const { Quiz, Question, Option, Lesson, Section, Course, User, QuizSubmission } = require('../models');
 const { Op } = require('sequelize');
 
 // Create quiz for lesson
@@ -1067,17 +1067,17 @@ exports.getInstructorCourses = async (req, res) => {
         include: [
           {
             model: User,
-            as: 'instructor', 
+            as: 'instructor',
             attributes: ['id', 'name', 'email'],
           },
           {
             model: Section,
-            as: 'Sections', 
+            as: 'Sections',
             attributes: ['id', 'title', 'order'],
             include: [
               {
                 model: Lesson,
-                as: 'Lessons', 
+                as: 'Lessons',
                 attributes: ['id', 'title', 'order'],
               },
             ],
@@ -1095,17 +1095,17 @@ exports.getInstructorCourses = async (req, res) => {
         include: [
           {
             model: User,
-            as: 'instructor', 
+            as: 'instructor',
             attributes: ['id', 'name', 'email'],
           },
           {
             model: Section,
-            as: 'Sections', 
+            as: 'Sections',
             attributes: ['id', 'title', 'order'],
             include: [
               {
                 model: Lesson,
-                as: 'Lessons', 
+                as: 'Lessons',
                 attributes: ['id', 'title', 'order'],
               },
             ],
@@ -1121,6 +1121,144 @@ exports.getInstructorCourses = async (req, res) => {
     });
   } catch (error) {
     console.error('Error in getInstructorCourses:', error);
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// Get quiz results (untuk results page)
+exports.getQuizResults = async (req, res) => {
+  try {
+    const { id } = req.params; // quiz ID
+    const userId = req.user.id;
+
+    console.log('Getting results for quiz ID:', id, 'user ID:', userId); // Debug log
+
+    // First, check if quiz exists
+    const quiz = await Quiz.findByPk(id);
+    if (!quiz) {
+      return res.status(404).json({ message: 'Quiz not found' });
+    }
+
+    // Find the user's submission for THIS SPECIFIC quiz only
+    const submission = await QuizSubmission.findOne({
+      where: {
+        userId: userId,
+        quizId: parseInt(id), // Ensure we only get submission for this specific quiz
+      },
+      order: [['createdAt', 'DESC']], // Get most recent if multiple submissions exist
+    });
+
+    if (!submission) {
+      return res.status(404).json({ message: 'No submission found for this quiz' });
+    }
+
+    // Now get the quiz with questions and the submission answers
+    const quizWithDetails = await Quiz.findByPk(id, {
+      include: [
+        {
+          model: Question,
+          as: 'Questions',
+          attributes: ['id', 'text', 'correctAnswer', 'points'],
+          include: [
+            {
+              model: Option,
+              as: 'Options',
+              attributes: ['id', 'text'],
+            },
+          ],
+        },
+        {
+          model: Lesson,
+          as: 'lesson',
+          attributes: ['id', 'title'],
+          include: [
+            {
+              model: Section,
+              as: 'section',
+              attributes: ['id', 'title'],
+              include: [
+                {
+                  model: Course,
+                  as: 'course',
+                  attributes: ['id', 'title'],
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    });
+
+    if (!quizWithDetails) {
+      return res.status(404).json({ message: 'Quiz details not found' });
+    }
+
+    // Parse submission answers (assuming it's stored as JSON)
+    let submissionAnswers = [];
+    try {
+      submissionAnswers = typeof submission.answers === 'string' ? JSON.parse(submission.answers) : submission.answers || [];
+    } catch (parseError) {
+      console.error('Error parsing submission answers:', parseError);
+      submissionAnswers = [];
+    }
+
+    // Build detailed results - ONLY for questions from THIS quiz
+    const results = {
+      submission: {
+        id: submission.id,
+        score: submission.score,
+        earnedPoints: submission.earnedPoints,
+        totalPoints: submission.totalPoints,
+        status: submission.status,
+        submittedAt: submission.submittedAt,
+        gradedAt: submission.gradedAt,
+        feedback: submission.feedback,
+      },
+      quiz: {
+        id: quizWithDetails.id,
+        title: quizWithDetails.title,
+        timeLimit: quizWithDetails.timeLimit,
+      },
+      questions: quizWithDetails.Questions.map((question) => {
+        // Find user's answer for this specific question
+        const userAnswer = submissionAnswers.find((answer) => parseInt(answer.questionId) === question.id);
+
+        // Find selected option
+        const selectedOption = userAnswer ? question.Options.find((opt) => opt.id === parseInt(userAnswer.selectedOptionId)) : null;
+
+        // Check if answer is correct
+        const isCorrect = selectedOption && selectedOption.text === question.correctAnswer;
+
+        return {
+          id: question.id,
+          text: question.text,
+          points: question.points,
+          correctAnswer: question.correctAnswer,
+          userAnswer: {
+            selectedOptionText: selectedOption ? selectedOption.text : '',
+            isCorrect: isCorrect,
+            pointsEarned: isCorrect ? question.points : 0,
+          },
+          options: question.Options.map((option) => ({
+            id: option.id,
+            text: option.text,
+            isCorrect: option.text === question.correctAnswer,
+            isSelected: selectedOption && selectedOption.id === option.id,
+          })),
+        };
+      }),
+    };
+
+    // Final validation - ensure we're returning data for the correct quiz
+    if (results.quiz.id !== parseInt(id)) {
+      return res.status(400).json({ message: 'Quiz ID mismatch in results' });
+    }
+
+    console.log('Returning results for quiz:', results.quiz.id, 'with', results.questions.length, 'questions'); // Debug log
+
+    res.json(results);
+  } catch (error) {
+    console.error('Error in getQuizResults:', error);
     res.status(500).json({ message: error.message });
   }
 };

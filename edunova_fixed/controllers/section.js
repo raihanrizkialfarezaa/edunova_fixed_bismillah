@@ -1,4 +1,4 @@
-const { Course, Section, Lesson, User } = require('../models');
+const { Course, Section, Lesson, User, Quiz } = require('../models');
 const { Op } = require('sequelize');
 
 // Create new section for a course
@@ -9,8 +9,8 @@ exports.createSection = async (req, res) => {
 
     // Validation
     if (!title) {
-      return res.status(400).json({ 
-        message: 'Section title is required' 
+      return res.status(400).json({
+        message: 'Section title is required',
       });
     }
 
@@ -22,8 +22,8 @@ exports.createSection = async (req, res) => {
 
     // Check if user is course owner or admin
     if (course.instructorId !== req.user.id && req.user.role !== 'ADMIN') {
-      return res.status(403).json({ 
-        message: 'You are not authorized to add sections to this course' 
+      return res.status(403).json({
+        message: 'You are not authorized to add sections to this course',
       });
     }
 
@@ -31,7 +31,7 @@ exports.createSection = async (req, res) => {
     let sectionOrder = order;
     if (!sectionOrder) {
       const maxOrder = await Section.max('order', {
-        where: { courseId }
+        where: { courseId },
       });
       sectionOrder = (maxOrder || 0) + 1;
     }
@@ -39,12 +39,12 @@ exports.createSection = async (req, res) => {
     // Check if order already exists for this course
     if (order) {
       const existingSection = await Section.findOne({
-        where: { courseId, order: sectionOrder }
+        where: { courseId, order: sectionOrder },
       });
-      
+
       if (existingSection) {
-        return res.status(400).json({ 
-          message: 'Section with this order already exists for this course' 
+        return res.status(400).json({
+          message: 'Section with this order already exists for this course',
         });
       }
     }
@@ -52,12 +52,12 @@ exports.createSection = async (req, res) => {
     const newSection = await Section.create({
       title,
       order: sectionOrder,
-      courseId
+      courseId,
     });
 
     res.status(201).json({
       message: 'Section created successfully',
-      section: newSection
+      section: newSection,
     });
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -77,13 +77,13 @@ exports.getCourseSections = async (req, res) => {
     }
 
     const includeOptions = [];
-    
+
     if (includeLessons === 'true') {
       includeOptions.push({
         model: Lesson,
         as: 'Lessons',
         attributes: ['id', 'title', 'duration', 'order', 'videoUrl'],
-        order: [['order', 'ASC']]
+        order: [['order', 'ASC']],
       });
     }
 
@@ -94,9 +94,9 @@ exports.getCourseSections = async (req, res) => {
       ...(includeLessons === 'true' && {
         order: [
           ['order', 'ASC'],
-          [{ model: Lesson, as: 'Lessons' }, 'order', 'ASC']
-        ]
-      })
+          [{ model: Lesson, as: 'Lessons' }, 'order', 'ASC'],
+        ],
+      }),
     });
 
     res.json({
@@ -104,11 +104,78 @@ exports.getCourseSections = async (req, res) => {
       sections,
       course: {
         id: course.id,
-        title: course.title
-      }
+        title: course.title,
+      },
     });
   } catch (error) {
     res.status(500).json({ message: error.message });
+  }
+};
+
+// Get sections by course ID with lessons
+const getSectionsByCourse = async (req, res) => {
+  try {
+    const { id: courseId } = req.params;
+    const { includeLessons = 'false' } = req.query;
+
+    // Check if course exists
+    const course = await Course.findByPk(courseId);
+    if (!course) {
+      return res.status(404).json({ message: 'Course not found' });
+    }
+
+    const includeOptions = [];
+
+    if (includeLessons === 'true') {
+      includeOptions.push({
+        model: Lesson,
+        as: 'Lessons',
+        attributes: ['id', 'title', 'content', 'duration', 'order', 'videoUrl', 'youtubeUrl', 'videoType'],
+        order: [['order', 'ASC']],
+        include: [
+          {
+            model: Quiz,
+            as: 'quiz',
+            attributes: ['id', 'title'],
+            required: false,
+          },
+        ],
+      });
+    }
+
+    const sections = await Section.findAll({
+      where: { courseId },
+      include: includeOptions,
+      order: [['order', 'ASC']],
+      ...(includeLessons === 'true' && {
+        order: [
+          ['order', 'ASC'],
+          [{ model: Lesson, as: 'Lessons' }, 'order', 'ASC'],
+        ],
+      }),
+    });
+
+    // Add hasVideo property to lessons
+    const sectionsWithVideoInfo = sections.map((section) => ({
+      ...section.toJSON(),
+      Lessons: section.Lessons?.map((lesson) => ({
+        ...lesson.toJSON(),
+        hasVideo: !!(lesson.videoUrl || lesson.youtubeUrl),
+        videoType: lesson.youtubeUrl ? 'youtube' : lesson.videoUrl ? 'cloudinary' : null,
+      })),
+    }));
+
+    res.json({
+      message: 'Course sections retrieved successfully',
+      sections: sectionsWithVideoInfo,
+      course: {
+        id: course.id,
+        title: course.title,
+      },
+    });
+  } catch (error) {
+    console.error('Error getting course sections:', error);
+    res.status(500).json({ message: 'Internal server error', error: error.message });
   }
 };
 
@@ -119,11 +186,13 @@ exports.updateSection = async (req, res) => {
     const { title, order } = req.body;
 
     const section = await Section.findByPk(id, {
-      include: [{
-        model: Course,
-        as: 'course',
-        attributes: ['id', 'instructorId']
-      }]
+      include: [
+        {
+          model: Course,
+          as: 'course',
+          attributes: ['id', 'instructorId'],
+        },
+      ],
     });
 
     if (!section) {
@@ -132,24 +201,24 @@ exports.updateSection = async (req, res) => {
 
     // Check if user has permission
     if (section.course.instructorId !== req.user.id && req.user.role !== 'ADMIN') {
-      return res.status(403).json({ 
-        message: 'You are not authorized to update this section' 
+      return res.status(403).json({
+        message: 'You are not authorized to update this section',
       });
     }
 
     // If order is being updated, check for conflicts
     if (order && order !== section.order) {
       const existingSection = await Section.findOne({
-        where: { 
-          courseId: section.courseId, 
+        where: {
+          courseId: section.courseId,
           order,
-          id: { [Op.ne]: id }
-        }
+          id: { [Op.ne]: id },
+        },
       });
-      
+
       if (existingSection) {
-        return res.status(400).json({ 
-          message: 'Section with this order already exists for this course' 
+        return res.status(400).json({
+          message: 'Section with this order already exists for this course',
         });
       }
     }
@@ -161,17 +230,19 @@ exports.updateSection = async (req, res) => {
     await section.update(updateData);
 
     const updatedSection = await Section.findByPk(id, {
-      include: [{
-        model: Lesson,
-        as: 'Lessons',
-        attributes: ['id', 'title', 'duration', 'order'],
-        order: [['order', 'ASC']]
-      }]
+      include: [
+        {
+          model: Lesson,
+          as: 'Lessons',
+          attributes: ['id', 'title', 'duration', 'order'],
+          order: [['order', 'ASC']],
+        },
+      ],
     });
 
     res.json({
       message: 'Section updated successfully',
-      section: updatedSection
+      section: updatedSection,
     });
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -184,11 +255,13 @@ exports.deleteSection = async (req, res) => {
     const { id } = req.params;
 
     const section = await Section.findByPk(id, {
-      include: [{
-        model: Course,
-        as: 'course',
-        attributes: ['id', 'instructorId']
-      }]
+      include: [
+        {
+          model: Course,
+          as: 'course',
+          attributes: ['id', 'instructorId'],
+        },
+      ],
     });
 
     if (!section) {
@@ -197,19 +270,19 @@ exports.deleteSection = async (req, res) => {
 
     // Check if user has permission
     if (section.course.instructorId !== req.user.id && req.user.role !== 'ADMIN') {
-      return res.status(403).json({ 
-        message: 'You are not authorized to delete this section' 
+      return res.status(403).json({
+        message: 'You are not authorized to delete this section',
       });
     }
 
     // Check if section has lessons
     const lessonsCount = await Lesson.count({
-      where: { sectionId: id }
+      where: { sectionId: id },
     });
 
     if (lessonsCount > 0) {
-      return res.status(400).json({ 
-        message: 'Cannot delete section that contains lessons. Please delete all lessons first.' 
+      return res.status(400).json({
+        message: 'Cannot delete section that contains lessons. Please delete all lessons first.',
       });
     }
 
@@ -228,8 +301,8 @@ exports.reorderSections = async (req, res) => {
     const { sectionOrders } = req.body; // Array of { id, order }
 
     if (!sectionOrders || !Array.isArray(sectionOrders)) {
-      return res.status(400).json({ 
-        message: 'sectionOrders array is required' 
+      return res.status(400).json({
+        message: 'sectionOrders array is required',
       });
     }
 
@@ -240,42 +313,40 @@ exports.reorderSections = async (req, res) => {
     }
 
     if (course.instructorId !== req.user.id && req.user.role !== 'ADMIN') {
-      return res.status(403).json({ 
-        message: 'You are not authorized to reorder sections for this course' 
+      return res.status(403).json({
+        message: 'You are not authorized to reorder sections for this course',
       });
     }
 
     // Verify all sections belong to this course
-    const sectionIds = sectionOrders.map(item => item.id);
+    const sectionIds = sectionOrders.map((item) => item.id);
     const sections = await Section.findAll({
-      where: { 
+      where: {
         id: { [Op.in]: sectionIds },
-        courseId 
-      }
+        courseId,
+      },
     });
 
     if (sections.length !== sectionIds.length) {
-      return res.status(400).json({ 
-        message: 'One or more sections do not belong to this course' 
+      return res.status(400).json({
+        message: 'One or more sections do not belong to this course',
       });
     }
 
     // Update section orders
-    const updatePromises = sectionOrders.map(({ id, order }) => 
-      Section.update({ order }, { where: { id } })
-    );
+    const updatePromises = sectionOrders.map(({ id, order }) => Section.update({ order }, { where: { id } }));
 
     await Promise.all(updatePromises);
 
     // Fetch updated sections
     const updatedSections = await Section.findAll({
       where: { courseId },
-      order: [['order', 'ASC']]
+      order: [['order', 'ASC']],
     });
 
     res.json({
       message: 'Sections reordered successfully',
-      sections: updatedSections
+      sections: updatedSections,
     });
   } catch (error) {
     res.status(500).json({ message: error.message });

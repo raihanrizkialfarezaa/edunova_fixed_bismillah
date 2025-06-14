@@ -1,4 +1,3 @@
-// frontend/app/routes.ts (updated)
 import { type RouteConfig, index, route } from '@react-router/dev/routes';
 
 export default [
@@ -6,7 +5,7 @@ export default [
   route('/login', 'routes/login.tsx'),
   route('/register', 'routes/register.tsx'),
   route('/courses/:id/sections', 'routes/courses.$id.sections.tsx'),
-  route('/courses/:id/lessons', 'routes/courses.$id.lessons.tsx'),
+  route('/courses/:id/lessons/:sectionId?', 'routes/courses.$id.lessons.tsx'),
   route('/quiz/:id/take', 'routes/quiz.$id.take.tsx'),
   route('/quiz/:id/results', 'routes/quiz.$id.results.tsx'),
   route('/enrollments/:id/payment', 'routes/enrollPayment.tsx'),
@@ -35,6 +34,8 @@ export default [
   route('/courses/:id/edit', 'routes/filter/course-update.tsx'),
   route('/courses/:id/delete', 'routes/filter/course-delete.tsx'),
   route('/courses/:id/status', 'routes/filter/course-status.tsx'),
+
+  // Course Advanced Management Routes
   route('/courses/:id/categories', 'routes/filter/add-category.tsx'),
   route('/courses/:id/tags', 'routes/filter/add-tags.tsx'),
 
@@ -59,9 +60,9 @@ export default [
   route('/admin/users/:id/approve-instructor', 'routes/user/admin-response.tsx'),
 
   // Profile
-  route('/profile','routes/user/profile-me.tsx'),
-  route('/profile/change-password','routes/user/change-password.tsx'),
-  route('/profile/request-instructor','routes/user/request-instructor.tsx'),
+  route('/profile', 'routes/user/profile-me.tsx'),
+  route('/profile/change-password', 'routes/user/change-password.tsx'),
+  route('/profile/request-instructor', 'routes/user/request-instructor.tsx'),
 
   // Instructor Management Routes
   route('/users/:id/instructor-profile', 'routes/instructor/update-profile.tsx'),

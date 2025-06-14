@@ -1,6 +1,6 @@
 import { Welcome } from '../welcome/welcome';
 import { useAuth } from '../contexts/AuthContext';
-import { Navigate, Link, useNavigate } from 'react-router'; // Corrected import for Link and Navigate
+import { Navigate, Link, useNavigate } from 'react-router'; 
 import { useState, useEffect } from 'react';
 import axiosInstance from '../lib/axios';
 import { quizApi } from '../lib/quizApi';

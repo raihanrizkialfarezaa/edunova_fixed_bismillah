@@ -20,6 +20,16 @@ import {
   CubeTransparentIcon,
   BeakerIcon,
   CodeBracketIcon,
+  CurrencyDollarIcon,
+  ClockIcon,
+  DevicePhoneMobileIcon,
+  ComputerDesktopIcon,
+  EyeIcon,
+  HeartIcon,
+  ChatBubbleBottomCenterTextIcon,
+  PresentationChartLineIcon,
+  AdjustmentsHorizontalIcon,
+  MagnifyingGlassIcon,
 } from '@heroicons/react/24/outline';
 
 export function Welcome() {
@@ -28,122 +38,182 @@ export function Welcome() {
   const [currentStat, setCurrentStat] = useState(0);
   const [currentTestimonial, setCurrentTestimonial] = useState(0);
   const [scrollY, setScrollY] = useState(0);
+  const [currentBenefit, setCurrentBenefit] = useState(0);
 
   const stats = [
-    { number: '15,000+', label: 'Siswa Aktif', color: 'text-emerald-400', icon: UsersIcon },
-    { number: '500+', label: 'Kursus Premium', color: 'text-blue-400', icon: BookOpenIcon },
-    { number: '98.5%', label: 'Tingkat Kepuasan', color: 'text-yellow-400', icon: StarIcon },
-    { number: '24/7', label: 'Dukungan Belajar', color: 'text-purple-400', icon: ShieldCheckIcon },
+    { number: '25,000+', label: 'Siswa Aktif', color: 'text-emerald-400', icon: UsersIcon, growth: '+15%' },
+    { number: '750+', label: 'Kursus Premium', color: 'text-blue-400', icon: BookOpenIcon, growth: '+25%' },
+    { number: '99.2%', label: 'Tingkat Kepuasan', color: 'text-yellow-400', icon: StarIcon, growth: '+0.7%' },
+    { number: '24/7', label: 'Dukungan Belajar', color: 'text-purple-400', icon: ShieldCheckIcon, growth: 'Live' },
   ];
 
   const features = [
     {
       icon: RocketLaunchIcon,
       title: 'Pembelajaran AI-Powered',
-      desc: 'Teknologi machine learning untuk jalur pembelajaran yang dipersonalisasi sesuai gaya belajar Anda',
-      color: 'bg-gradient-to-br from-purple-600/30 to-pink-600/20',
+      desc: 'Teknologi machine learning canggih untuk jalur pembelajaran yang dipersonalisasi secara otomatis sesuai gaya dan kecepatan belajar unik Anda',
+      color: 'bg-gradient-to-br from-purple-600/40 to-pink-600/30',
       iconColor: 'text-purple-400',
-      borderColor: 'border-purple-500/40',
-      glowColor: 'group-hover:shadow-purple-500/25',
+      borderColor: 'border-purple-500/50',
+      glowColor: 'group-hover:shadow-purple-500/30',
+      badge: 'AI-Powered',
+      badgeColor: 'bg-purple-500/20 text-purple-300',
     },
     {
       icon: TrophyIcon,
-      title: 'Sertifikat Terakreditasi',
-      desc: 'Sertifikat yang diakui oleh industri global untuk meningkatkan kredibilitas profesional Anda',
-      color: 'bg-gradient-to-br from-yellow-600/30 to-orange-600/20',
+      title: 'Sertifikat Terakreditasi Global',
+      desc: 'Sertifikat berstandar internasional yang diakui oleh 500+ perusahaan multinasional dan startup unicorn untuk meningkatkan kredibilitas profesional',
+      color: 'bg-gradient-to-br from-yellow-600/40 to-orange-600/30',
       iconColor: 'text-yellow-400',
-      borderColor: 'border-yellow-500/40',
-      glowColor: 'group-hover:shadow-yellow-500/25',
+      borderColor: 'border-yellow-500/50',
+      glowColor: 'group-hover:shadow-yellow-500/30',
+      badge: 'Terakreditasi',
+      badgeColor: 'bg-yellow-500/20 text-yellow-300',
     },
     {
       icon: BoltIcon,
-      title: 'Akses Seketika',
-      desc: 'Platform cloud canggih dengan teknologi CDN global untuk pengalaman belajar tanpa batas',
-      color: 'bg-gradient-to-br from-blue-600/30 to-cyan-600/20',
+      title: 'Akses Seketika Tanpa Batas',
+      desc: 'Platform cloud enterprise dengan teknologi CDN global dan infrastruktur 99.9% uptime untuk pengalaman belajar yang seamless dimana saja',
+      color: 'bg-gradient-to-br from-blue-600/40 to-cyan-600/30',
       iconColor: 'text-cyan-400',
-      borderColor: 'border-cyan-500/40',
-      glowColor: 'group-hover:shadow-cyan-500/25',
+      borderColor: 'border-cyan-500/50',
+      glowColor: 'group-hover:shadow-cyan-500/30',
+      badge: 'Cloud-Native',
+      badgeColor: 'bg-cyan-500/20 text-cyan-300',
     },
     {
       icon: GlobeAltIcon,
-      title: 'Komunitas Global',
-      desc: 'Jaringan pembelajar internasional dengan forum diskusi dan mentoring peer-to-peer',
-      color: 'bg-gradient-to-br from-green-600/30 to-emerald-600/20',
+      title: 'Komunitas Global Elite',
+      desc: 'Jaringan pembelajaran internasional dengan 50,000+ profesional dari 120+ negara, forum diskusi premium, dan program mentoring eksklusif',
+      color: 'bg-gradient-to-br from-green-600/40 to-emerald-600/30',
       iconColor: 'text-emerald-400',
-      borderColor: 'border-emerald-500/40',
-      glowColor: 'group-hover:shadow-emerald-500/25',
+      borderColor: 'border-emerald-500/50',
+      glowColor: 'group-hover:shadow-emerald-500/30',
+      badge: 'Global Network',
+      badgeColor: 'bg-emerald-500/20 text-emerald-300',
     },
   ];
 
   const testimonials = [
     {
       name: 'Sarah Wijaya',
-      role: 'Software Engineer di Tokopedia',
-      content: 'EduNova mengubah karir saya sepenuhnya. Dalam 6 bulan, saya berhasil mendapat promosi dan gaji naik 150%!',
+      role: 'Senior Software Engineer',
+      content: 'EduNova mengubah hidup saya sepenuhnya! Dalam 8 bulan, saya berhasil mendapat promosi ke senior engineer dan gaji naik 200%. Platform ini benar-benar luar biasa!',
       rating: 5,
       avatar: '👩‍💻',
       company: 'Tokopedia',
+      salary: '+200%',
+      time: '8 bulan',
     },
     {
       name: 'Ahmad Rahman',
-      role: 'Digital Marketing Manager',
-      content: 'Platform terbaik untuk belajar skill digital. Materinya selalu up-to-date dan langsung applicable di dunia kerja.',
+      role: 'Digital Marketing Director',
+      content: 'Platform terbaik yang pernah saya gunakan! Materinya selalu up-to-date dengan trend industry terbaru. Sekarang saya memimpin tim marketing digital di unicorn startup.',
       rating: 5,
       avatar: '👨‍💼',
       company: 'Shopee',
+      salary: '+180%',
+      time: '6 bulan',
     },
     {
       name: 'Lisa Chen',
-      role: 'UI/UX Designer',
-      content: 'Instruktur berkualitas dan metode pembelajaran yang sangat efektif. Portfolio saya sekarang jauh lebih profesional!',
+      role: 'Head of Design',
+      content: 'Instruktur world-class dan metode pembelajaran yang sangat efektif. Portfolio saya sekarang level internasional dan berhasil join perusahaan impian!',
       rating: 5,
       avatar: '👩‍🎨',
       company: 'Gojek',
+      salary: '+250%',
+      time: '10 bulan',
     },
   ];
 
   const courseCategories = [
     {
       name: 'Web Development',
-      count: '120+ Kursus',
+      count: '150+ Kursus',
       color: 'from-blue-500 to-indigo-600',
       icon: CodeBracketIcon,
-      students: '12K+ siswa',
+      students: '18K+ siswa',
+      level: 'Pemula - Expert',
+      duration: '3-12 bulan',
+      salary: 'Rp 8-25 juta',
     },
     {
-      name: 'Data Science',
-      count: '85+ Kursus',
+      name: 'Data Science & AI',
+      count: '120+ Kursus',
       color: 'from-green-500 to-emerald-600',
       icon: ChartBarIcon,
-      students: '8K+ siswa',
+      students: '12K+ siswa',
+      level: 'Menengah - Expert',
+      duration: '6-18 bulan',
+      salary: 'Rp 12-35 juta',
     },
     {
       name: 'Digital Marketing',
-      count: '95+ Kursus',
+      count: '130+ Kursus',
       color: 'from-pink-500 to-rose-600',
       icon: SparklesIcon,
-      students: '15K+ siswa',
+      students: '22K+ siswa',
+      level: 'Pemula - Expert',
+      duration: '2-8 bulan',
+      salary: 'Rp 6-20 juta',
     },
     {
       name: 'Mobile Development',
-      count: '75+ Kursus',
+      count: '100+ Kursus',
       color: 'from-purple-500 to-violet-600',
-      icon: CubeTransparentIcon,
-      students: '9K+ siswa',
+      icon: DevicePhoneMobileIcon,
+      students: '14K+ siswa',
+      level: 'Pemula - Expert',
+      duration: '4-12 bulan',
+      salary: 'Rp 10-30 juta',
     },
     {
       name: 'AI & Machine Learning',
-      count: '60+ Kursus',
+      count: '85+ Kursus',
       color: 'from-orange-500 to-red-600',
       icon: BeakerIcon,
-      students: '6K+ siswa',
+      students: '8K+ siswa',
+      level: 'Menengah - Expert',
+      duration: '8-24 bulan',
+      salary: 'Rp 15-50 juta',
     },
     {
       name: 'Cybersecurity',
-      count: '45+ Kursus',
+      count: '75+ Kursus',
       color: 'from-teal-500 to-cyan-600',
       icon: ShieldCheckIcon,
-      students: '4K+ siswa',
+      students: '6K+ siswa',
+      level: 'Menengah - Expert',
+      duration: '6-18 bulan',
+      salary: 'Rp 12-40 juta',
+    },
+  ];
+
+  const benefits = [
+    {
+      icon: CurrencyDollarIcon,
+      title: 'Garansi Kerja 100%',
+      desc: 'Jaminan mendapat pekerjaan dalam 6 bulan atau uang kembali penuh',
+      color: 'text-emerald-400',
+    },
+    {
+      icon: ClockIcon,
+      title: 'Belajar Fleksibel',
+      desc: 'Akses 24/7 dengan progress tracking dan reminder pintar',
+      color: 'text-blue-400',
+    },
+    {
+      icon: UsersIcon,
+      title: 'Mentoring 1-on-1',
+      desc: 'Sesi konsultasi personal dengan industry expert',
+      color: 'text-purple-400',
+    },
+    {
+      icon: TrophyIcon,
+      title: 'Job Placement',
+      desc: 'Bantuan penempatan kerja di 1000+ perusahaan partner',
+      color: 'text-yellow-400',
     },
   ];
 
@@ -160,11 +230,15 @@ export function Welcome() {
 
     const statInterval = setInterval(() => {
       setCurrentStat((prev) => (prev + 1) % stats.length);
-    }, 3000);
+    }, 2500);
 
     const testimonialInterval = setInterval(() => {
       setCurrentTestimonial((prev) => (prev + 1) % testimonials.length);
-    }, 5000);
+    }, 4000);
+
+    const benefitInterval = setInterval(() => {
+      setCurrentBenefit((prev) => (prev + 1) % benefits.length);
+    }, 3000);
 
     window.addEventListener('mousemove', handleMouseMove);
     window.addEventListener('scroll', handleScroll);
@@ -174,221 +248,306 @@ export function Welcome() {
       window.removeEventListener('scroll', handleScroll);
       clearInterval(statInterval);
       clearInterval(testimonialInterval);
+      clearInterval(benefitInterval);
     };
   }, []);
 
   return (
     <main className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 relative overflow-hidden">
-      {/* Enhanced Background Effects */}
+      {/* Ultra Enhanced Background Effects */}
       <div className="absolute inset-0">
-        {/* Animated Mesh Gradient */}
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-purple-600/20 via-transparent to-transparent"></div>
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_right,_var(--tw-gradient-stops))] from-blue-600/20 via-transparent to-transparent"></div>
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_left,_var(--tw-gradient-stops))] from-indigo-600/15 via-transparent to-transparent"></div>
+        {/* Layered Mesh Gradients */}
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-purple-600/25 via-transparent to-transparent"></div>
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_right,_var(--tw-gradient-stops))] from-blue-600/25 via-transparent to-transparent"></div>
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_left,_var(--tw-gradient-stops))] from-indigo-600/20 via-transparent to-transparent"></div>
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-pink-600/15 via-transparent to-transparent"></div>
 
-        {/* Enhanced Floating Orbs */}
-        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-gradient-to-r from-purple-600/15 to-pink-600/10 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-gradient-to-r from-blue-600/15 to-cyan-600/10 rounded-full blur-3xl animate-pulse delay-1000"></div>
-        <div className="absolute top-1/2 left-1/2 w-64 h-64 bg-gradient-to-r from-indigo-600/10 to-purple-600/5 rounded-full blur-2xl animate-pulse delay-2000"></div>
+        {/* Massive Floating Orbs */}
+        <div className="absolute top-0 left-0 w-[800px] h-[800px] bg-gradient-to-r from-purple-600/20 to-pink-600/15 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute bottom-0 right-0 w-[800px] h-[800px] bg-gradient-to-r from-blue-600/20 to-cyan-600/15 rounded-full blur-3xl animate-pulse delay-1000"></div>
+        <div className="absolute top-1/2 left-1/2 w-[600px] h-[600px] bg-gradient-to-r from-indigo-600/15 to-purple-600/10 rounded-full blur-3xl animate-pulse delay-2000"></div>
+        <div className="absolute top-1/4 right-1/4 w-[400px] h-[400px] bg-gradient-to-r from-emerald-600/15 to-teal-600/10 rounded-full blur-2xl animate-pulse delay-3000"></div>
 
-        {/* Animated Grid Pattern */}
+        {/* Enhanced Grid Pattern */}
         <div
-          className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,.08)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,.08)_1px,transparent_1px)] bg-[size:100px_100px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_50%,#000_60%,transparent_100%)]"
+          className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,.1)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,.1)_1px,transparent_1px)] bg-[size:80px_80px] [mask-image:radial-gradient(ellipse_70%_60%_at_50%_50%,#000_60%,transparent_100%)]"
           style={{
-            transform: `translateY(${scrollY * 0.5}px)`,
+            transform: `translateY(${scrollY * 0.3}px) rotate(${scrollY * 0.01}deg)`,
           }}
         ></div>
 
-        {/* Enhanced Mouse Follow Effect */}
+        {/* Ultra Mouse Follow Effect */}
         <div
-          className="absolute w-[800px] h-[800px] bg-gradient-to-r from-indigo-600/8 to-purple-600/6 rounded-full blur-3xl transition-all duration-1000 ease-out pointer-events-none"
+          className="absolute w-[1200px] h-[1200px] bg-gradient-to-r from-indigo-600/10 to-purple-600/8 rounded-full blur-3xl transition-all duration-1000 ease-out pointer-events-none"
           style={{
-            left: mousePosition.x - 400,
-            top: mousePosition.y - 400,
+            left: mousePosition.x - 600,
+            top: mousePosition.y - 600,
           }}
         ></div>
 
-        {/* Floating Particles */}
+        {/* Enhanced Floating Particles */}
         <div className="absolute inset-0 overflow-hidden">
-          {[...Array(20)].map((_, i) => (
+          {[...Array(40)].map((_, i) => (
             <div
               key={i}
-              className="absolute w-1 h-1 bg-white/20 rounded-full animate-float"
+              className="absolute bg-gradient-to-r from-white/30 to-purple-400/30 rounded-full animate-float"
               style={{
+                width: `${Math.random() * 4 + 2}px`,
+                height: `${Math.random() * 4 + 2}px`,
                 left: `${Math.random() * 100}%`,
                 top: `${Math.random() * 100}%`,
-                animationDelay: `${Math.random() * 5}s`,
-                animationDuration: `${5 + Math.random() * 5}s`,
+                animationDelay: `${Math.random() * 8}s`,
+                animationDuration: `${6 + Math.random() * 8}s`,
               }}
             ></div>
           ))}
         </div>
+
+        {/* New: Animated Geometric Shapes */}
+        <div className="absolute inset-0 overflow-hidden opacity-30">
+          <div className="absolute top-20 left-20 w-32 h-32 border border-purple-500/30 rounded-lg rotate-45 animate-spin-slow"></div>
+          <div className="absolute bottom-20 right-20 w-24 h-24 border border-blue-500/30 rounded-full animate-bounce"></div>
+          <div className="absolute top-1/2 left-10 w-16 h-16 bg-gradient-to-r from-pink-500/20 to-purple-500/20 rounded-full animate-pulse"></div>
+          <div className="absolute bottom-1/4 left-1/4 w-20 h-20 border-2 border-emerald-500/30 transform rotate-12 animate-float"></div>
+        </div>
       </div>
 
-      {/* Enhanced Navigation */}
-      <nav className="relative z-50 py-6 px-4 lg:px-8 backdrop-blur-xl">
+      {/* Premium Navigation */}
+      <nav className="relative z-50 py-6 px-4 lg:px-8 backdrop-blur-2xl border-b border-white/10">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
-          <div className="flex items-center space-x-3">
-            <div className="relative p-3 bg-gradient-to-r from-indigo-600 to-purple-600 rounded-2xl shadow-lg shadow-indigo-500/25">
+          <div className="flex items-center space-x-4">
+            <div className="relative p-4 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 rounded-2xl shadow-2xl shadow-indigo-500/30 transform hover:scale-105 transition-transform duration-300">
               <AcademicCapIcon className="h-8 w-8 text-white" />
-              <div className="absolute -top-1 -right-1 w-3 h-3 bg-green-400 rounded-full animate-pulse"></div>
+              <div className="absolute -top-1 -right-1 w-4 h-4 bg-gradient-to-r from-green-400 to-emerald-400 rounded-full animate-pulse shadow-lg"></div>
+              <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-700 rounded-2xl"></div>
             </div>
             <div>
-              <span className="text-2xl font-black text-white">EduNova</span>
-              <div className="text-xs text-gray-400 font-medium">Learning Platform</div>
+              <div className="flex items-center space-x-2">
+                <span className="text-3xl font-black bg-gradient-to-r from-white to-gray-200 bg-clip-text text-transparent">EduNova</span>
+                <div className="px-3 py-1 bg-gradient-to-r from-yellow-500 to-orange-500 text-black text-xs font-black rounded-full">PREMIUM</div>
+              </div>
+              <div className="text-sm text-gray-400 font-medium">Platform Pembelajaran #1 Indonesia</div>
             </div>
           </div>
+
           <div className="hidden md:flex items-center space-x-8 text-gray-300">
-            <Link to="/course" className="relative group hover:text-white transition-all duration-300 font-medium">
+            <Link to="/course" className="relative group hover:text-white transition-all duration-300 font-semibold text-lg">
               Kursus
-              <div className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-indigo-500 to-purple-500 group-hover:w-full transition-all duration-300"></div>
+              <div className="absolute -bottom-2 left-0 w-0 h-1 bg-gradient-to-r from-indigo-500 to-purple-500 group-hover:w-full transition-all duration-300 rounded-full"></div>
             </Link>
-            <Link to="/instructors" className="relative group hover:text-white transition-all duration-300 font-medium">
+            <Link to="/instructors" className="relative group hover:text-white transition-all duration-300 font-semibold text-lg">
               Instruktur
-              <div className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-indigo-500 to-purple-500 group-hover:w-full transition-all duration-300"></div>
+              <div className="absolute -bottom-2 left-0 w-0 h-1 bg-gradient-to-r from-indigo-500 to-purple-500 group-hover:w-full transition-all duration-300 rounded-full"></div>
             </Link>
-            <Link to="/about" className="relative group hover:text-white transition-all duration-300 font-medium">
+            <Link to="/about" className="relative group hover:text-white transition-all duration-300 font-semibold text-lg">
               Tentang
-              <div className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-indigo-500 to-purple-500 group-hover:w-full transition-all duration-300"></div>
+              <div className="absolute -bottom-2 left-0 w-0 h-1 bg-gradient-to-r from-indigo-500 to-purple-500 group-hover:w-full transition-all duration-300 rounded-full"></div>
             </Link>
           </div>
+
           <div className="flex items-center space-x-4">
-            <Link to="/login" className="px-6 py-2.5 text-gray-300 hover:text-white transition-all duration-300 font-medium rounded-lg hover:bg-white/5">
+            <Link to="/login" className="px-8 py-3 text-gray-300 hover:text-white transition-all duration-300 font-semibold rounded-xl hover:bg-white/10 backdrop-blur-sm border border-transparent hover:border-white/20">
               Masuk
             </Link>
             <Link
               to="/register"
-              className="relative px-6 py-2.5 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white rounded-xl font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg shadow-indigo-500/25 hover:shadow-indigo-500/40 overflow-hidden group"
+              className="relative px-8 py-3 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 hover:from-indigo-700 hover:via-purple-700 hover:to-pink-700 text-white rounded-xl font-bold transition-all duration-300 transform hover:scale-105 shadow-2xl shadow-indigo-500/30 hover:shadow-indigo-500/50 overflow-hidden group"
             >
-              <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
-              <span className="relative">Daftar Gratis</span>
+              <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/25 to-white/0 transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
+              <span className="relative flex items-center">
+                <RocketLaunchIcon className="w-5 h-5 mr-2 group-hover:animate-bounce" />
+                Daftar Gratis
+              </span>
             </Link>
           </div>
         </div>
       </nav>
 
-      {/* Enhanced Hero Section */}
-      <section className="relative z-10 pt-20 pb-32 px-4 lg:px-8">
+      {/* Ultra Enhanced Hero Section */}
+      <section className="relative z-10 pt-24 pb-40 px-4 lg:px-8">
         <div className="max-w-7xl mx-auto">
-          <div className="grid lg:grid-cols-2 gap-20 items-center">
-            {/* Left Content */}
-            <div className={`text-center lg:text-left space-y-8 transform transition-all duration-1000 ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
-              {/* Enhanced Badge */}
-              <div className="inline-flex items-center space-x-3 bg-gradient-to-r from-indigo-600/20 to-purple-600/20 backdrop-blur-sm border border-indigo-500/30 rounded-full px-6 py-3 shadow-lg shadow-indigo-500/10">
-                <FireIcon className="w-5 h-5 text-orange-400 animate-pulse" />
-                <span className="text-orange-400 font-bold text-sm tracking-wide uppercase">🔥 Platform #1 di Indonesia</span>
-                <div className="w-2 h-2 bg-red-500 rounded-full animate-ping"></div>
+          <div className="grid lg:grid-cols-2 gap-24 items-center">
+            {/* Revolutionary Left Content */}
+            <div className={`text-center lg:text-left space-y-10 transform transition-all duration-1000 ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
+              {/* Ultra Premium Badge */}
+              <div className="inline-flex items-center space-x-4 bg-gradient-to-r from-indigo-600/30 via-purple-600/30 to-pink-600/30 backdrop-blur-2xl border border-indigo-500/40 rounded-2xl px-8 py-4 shadow-2xl shadow-indigo-500/20">
+                <div className="flex items-center space-x-2">
+                  <FireIcon className="w-6 h-6 text-orange-400 animate-pulse" />
+                  <span className="text-orange-400 font-black text-base tracking-wide uppercase">🔥 Platform Pembelajaran Terbaik</span>
+                </div>
+                <div className="flex items-center space-x-1">
+                  <div className="w-3 h-3 bg-red-500 rounded-full animate-ping"></div>
+                  <span className="text-green-400 font-bold text-sm">LIVE</span>
+                </div>
               </div>
 
-              {/* Enhanced Main Title */}
-              <div className="space-y-6">
-                <h1 className="text-5xl md:text-6xl lg:text-7xl font-black text-white leading-tight">
-                  <span className="inline-block animate-fade-in-up">Wujudkan Impian</span>
+              {/* Revolutionary Main Title */}
+              <div className="space-y-8">
+                <h1 className="text-6xl md:text-7xl lg:text-8xl font-black text-white leading-tight">
+                  <span className="inline-block animate-fade-in-up">Revolusi</span>
                   <br />
-                  <span className="bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 bg-clip-text text-transparent animate-gradient-x">Karir Anda</span>
+                  <span className="bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 bg-clip-text text-transparent animate-gradient-x inline-block">Masa Depan</span>
                   <br />
-                  <span className="inline-block animate-fade-in-up delay-200">Bersama EduNova</span>
+                  <span className="inline-block animate-fade-in-up delay-200">Karir Anda</span>
                 </h1>
 
-                <p className="text-xl lg:text-2xl text-gray-300 leading-relaxed max-w-2xl animate-fade-in-up delay-300">
-                  Bergabunglah dengan <span className="font-bold bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">15,000+ profesional</span> yang telah mengubah hidup mereka melalui pembelajaran
-                  berkualitas tinggi dari instruktur terbaik dunia.
+                <p className="text-2xl lg:text-3xl text-gray-300 leading-relaxed max-w-3xl animate-fade-in-up delay-300">
+                  Bergabunglah dengan <span className="font-black bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">25,000+ profesional elite</span> yang telah mengubah hidupnya secara total melalui pembelajaran
+                  premium berkelas dunia dari instruktur terbaik global.
                 </p>
               </div>
 
-              {/* Enhanced CTA Buttons */}
-              <div className="flex flex-col sm:flex-row gap-4 pt-8">
+              {/* Ultimate CTA Buttons */}
+              <div className="flex flex-col sm:flex-row gap-6 pt-10">
                 <Link
                   to="/register"
-                  className="group relative inline-flex items-center justify-center px-8 py-4 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 hover:from-indigo-700 hover:via-purple-700 hover:to-pink-700 text-white font-bold text-lg rounded-xl transition-all duration-300 transform hover:scale-105 hover:shadow-2xl hover:shadow-purple-500/25 overflow-hidden"
+                  className="group relative inline-flex items-center justify-center px-12 py-6 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 hover:from-indigo-700 hover:via-purple-700 hover:to-pink-700 text-white font-black text-xl rounded-2xl transition-all duration-300 transform hover:scale-105 hover:shadow-3xl hover:shadow-purple-500/30 overflow-hidden"
                 >
-                  <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
-                  <RocketLaunchIcon className="mr-3 w-6 h-6 group-hover:animate-bounce" />
-                  <span className="relative">Mulai Gratis Sekarang</span>
-                  <ArrowRightIcon className="ml-3 w-5 h-5 group-hover:translate-x-1 transition-transform duration-300" />
+                  <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/25 to-white/0 transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
+                  <RocketLaunchIcon className="mr-4 w-7 h-7 group-hover:animate-bounce" />
+                  <span className="relative">Mulai Revolusi Sekarang</span>
+                  <ArrowRightIcon className="ml-4 w-6 h-6 group-hover:translate-x-2 transition-transform duration-300" />
                 </Link>
 
                 <Link
                   to="/course"
-                  className="group inline-flex items-center justify-center px-8 py-4 border-2 border-gray-600 hover:border-purple-500 text-gray-300 hover:text-white font-semibold text-lg rounded-xl transition-all duration-300 transform hover:scale-105 backdrop-blur-sm hover:bg-purple-500/10"
+                  className="group inline-flex items-center justify-center px-12 py-6 border-2 border-gray-600 hover:border-purple-500 text-gray-300 hover:text-white font-bold text-xl rounded-2xl transition-all duration-300 transform hover:scale-105 backdrop-blur-2xl hover:bg-purple-500/20 hover:shadow-2xl"
                 >
-                  <PlayIcon className="mr-3 w-5 h-5 group-hover:animate-pulse" />
-                  <span>Jelajahi Kursus</span>
+                  <MagnifyingGlassIcon className="mr-4 w-6 h-6 group-hover:animate-pulse" />
+                  <span>Jelajahi Kursus Premium</span>
                 </Link>
               </div>
 
-              {/* Enhanced Trust Indicators */}
-              <div className="flex flex-col sm:flex-row items-center gap-8 pt-8">
-                <div className="flex items-center space-x-2">
-                  <div className="flex -space-x-2">
-                    {['👩‍💻', '👨‍💼', '👩‍🎨', '👨‍🚀', '👩‍🔬'].map((emoji, i) => (
+              {/* Ultra Enhanced Trust Indicators */}
+              <div className="flex flex-col sm:flex-row items-center gap-10 pt-12">
+                <div className="flex items-center space-x-3">
+                  <div className="flex -space-x-3">
+                    {['👩‍💻', '👨‍💼', '👩‍🎨', '👨‍🚀', '👩‍🔬', '👨‍💻', '👩‍💼'].map((emoji, i) => (
                       <div
                         key={i}
-                        className="w-12 h-12 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-full border-3 border-white flex items-center justify-center text-lg shadow-lg transform hover:scale-110 transition-transform duration-300"
+                        className="w-14 h-14 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-full border-4 border-white flex items-center justify-center text-xl shadow-2xl transform hover:scale-125 hover:z-10 transition-all duration-300 cursor-pointer"
                       >
                         {emoji}
                       </div>
                     ))}
-                    <div className="w-12 h-12 bg-gradient-to-r from-gray-800 to-gray-700 rounded-full border-3 border-white flex items-center justify-center text-white font-bold text-xs shadow-lg">+15K</div>
+                    <div className="w-14 h-14 bg-gradient-to-r from-gray-800 to-gray-700 rounded-full border-4 border-white flex items-center justify-center text-white font-black text-sm shadow-2xl">+25K</div>
                   </div>
                 </div>
                 <div className="text-center sm:text-left">
-                  <div className="flex items-center justify-center sm:justify-start space-x-1 mb-1">
+                  <div className="flex items-center justify-center sm:justify-start space-x-2 mb-2">
                     {[...Array(5)].map((_, i) => (
-                      <StarIcon key={i} className="w-5 h-5 text-yellow-400 fill-current animate-pulse" style={{ animationDelay: `${i * 0.1}s` }} />
+                      <StarIcon key={i} className="w-6 h-6 text-yellow-400 fill-current animate-pulse" style={{ animationDelay: `${i * 0.1}s` }} />
                     ))}
-                    <span className="text-yellow-400 font-bold ml-2 text-lg">4.9/5</span>
+                    <span className="text-yellow-400 font-black ml-3 text-2xl">4.9/5</span>
                   </div>
-                  <p className="text-sm text-gray-400">Dipercaya ribuan siswa di seluruh Indonesia</p>
+                  <p className="text-base text-gray-400 font-medium">Dipercaya puluhan ribu profesional Indonesia & global</p>
+                </div>
+              </div>
+
+              {/* New: Live Benefits Carousel */}
+              <div className="mt-12 p-6 bg-gray-900/50 backdrop-blur-2xl border border-gray-700/50 rounded-2xl">
+                <div className="flex items-center space-x-4">
+                  <div className={`p-3 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-xl`}>
+                    {(() => {
+                      const IconComponent = benefits[currentBenefit].icon;
+                      return <IconComponent className={`w-6 h-6 ${benefits[currentBenefit].color}`} />;
+                    })()}
+                  </div>
+                  <div>
+                    <h4 className="text-white font-bold text-lg">{benefits[currentBenefit].title}</h4>
+                    <p className="text-gray-400 text-sm">{benefits[currentBenefit].desc}</p>
+                  </div>
+                </div>
+                <div className="flex justify-center space-x-2 mt-4">
+                  {benefits.map((_, index) => (
+                    <div key={index} className={`w-2 h-2 rounded-full transition-all duration-300 ${index === currentBenefit ? 'bg-indigo-500 scale-125' : 'bg-gray-600'}`}></div>
+                  ))}
                 </div>
               </div>
             </div>
 
-            {/* Enhanced Right Content - Stats & Features */}
-            <div className={`space-y-8 transform transition-all duration-1000 delay-300 ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
-              {/* Enhanced Stats Grid */}
-              <div className="grid grid-cols-2 gap-4">
+            {/* Enhanced Right Content - Premium Stats & Features */}
+            <div className={`space-y-10 transform transition-all duration-1000 delay-300 ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
+              {/* Premium Stats Grid */}
+              <div className="grid grid-cols-2 gap-6">
                 {stats.map((stat, index) => (
                   <div
                     key={index}
-                    className={`relative group p-6 bg-gray-900/70 backdrop-blur-xl border border-gray-700/50 rounded-2xl transition-all duration-500 hover:scale-105 hover:bg-gray-800/70 cursor-pointer ${
-                      currentStat === index ? 'ring-2 ring-indigo-500 scale-105 shadow-lg shadow-indigo-500/25' : ''
+                    className={`relative group p-8 bg-gray-900/70 backdrop-blur-2xl border border-gray-700/50 rounded-3xl transition-all duration-500 hover:scale-105 hover:bg-gray-800/70 cursor-pointer ${
+                      currentStat === index ? 'ring-2 ring-indigo-500 scale-105 shadow-2xl shadow-indigo-500/30' : ''
                     }`}
                   >
-                    <div className="flex items-center justify-between mb-3">
-                      <stat.icon className={`w-8 h-8 ${stat.color} group-hover:animate-pulse`} />
-                      <div className="w-3 h-3 bg-green-400 rounded-full animate-pulse"></div>
+                    <div className="flex items-center justify-between mb-4">
+                      <stat.icon className={`w-10 h-10 ${stat.color} group-hover:animate-pulse`} />
+                      <div className="flex flex-col items-end">
+                        <div className="w-3 h-3 bg-green-400 rounded-full animate-pulse"></div>
+                        <span className="text-xs text-green-400 font-bold mt-1">{stat.growth}</span>
+                      </div>
                     </div>
-                    <div className={`text-3xl font-black ${stat.color} mb-1 group-hover:scale-110 transition-transform duration-300`}>{stat.number}</div>
-                    <div className="text-sm text-gray-400 font-medium">{stat.label}</div>
-                    {currentStat === index && <div className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-b-2xl animate-pulse"></div>}
-                    <div className="absolute inset-0 bg-gradient-to-r from-white/0 to-white/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-2xl"></div>
+                    <div className={`text-4xl font-black ${stat.color} mb-2 group-hover:scale-110 transition-transform duration-300`}>{stat.number}</div>
+                    <div className="text-sm text-gray-400 font-semibold">{stat.label}</div>
+                    {currentStat === index && <div className="absolute bottom-0 left-0 w-full h-2 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-b-3xl animate-pulse"></div>}
+                    <div className="absolute inset-0 bg-gradient-to-r from-white/0 to-white/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-3xl"></div>
                   </div>
                 ))}
               </div>
 
-              {/* Enhanced Testimonial Card */}
-              <div className="relative p-6 bg-gray-900/70 backdrop-blur-xl border border-gray-700/50 rounded-2xl shadow-lg">
-                <div className="flex items-start space-x-4">
-                  <div className="text-4xl animate-bounce">{testimonials[currentTestimonial].avatar}</div>
+              {/* Premium Testimonial Card */}
+              <div className="relative p-8 bg-gray-900/70 backdrop-blur-2xl border border-gray-700/50 rounded-3xl shadow-2xl hover:shadow-3xl transition-all duration-500">
+                <div className="absolute top-4 right-4 flex space-x-1">
+                  {[...Array(testimonials[currentTestimonial].rating)].map((_, i) => (
+                    <StarIcon key={i} className="w-5 h-5 text-yellow-400 fill-current animate-pulse" style={{ animationDelay: `${i * 0.1}s` }} />
+                  ))}
+                </div>
+
+                <div className="flex items-start space-x-6">
+                  <div className="text-5xl animate-bounce">{testimonials[currentTestimonial].avatar}</div>
                   <div className="flex-1">
-                    <div className="flex items-center space-x-1 mb-2">
-                      {[...Array(testimonials[currentTestimonial].rating)].map((_, i) => (
-                        <StarIcon key={i} className="w-4 h-4 text-yellow-400 fill-current animate-pulse" style={{ animationDelay: `${i * 0.1}s` }} />
-                      ))}
-                    </div>
-                    <p className="text-gray-300 mb-3 italic text-sm leading-relaxed">"{testimonials[currentTestimonial].content}"</p>
-                    <div>
-                      <div className="font-semibold text-white">{testimonials[currentTestimonial].name}</div>
-                      <div className="text-sm text-gray-400">{testimonials[currentTestimonial].role}</div>
-                      <div className="text-xs text-indigo-400 font-medium">{testimonials[currentTestimonial].company}</div>
+                    <p className="text-gray-300 mb-4 italic text-lg leading-relaxed font-medium">"{testimonials[currentTestimonial].content}"</p>
+
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <div className="font-bold text-white text-lg">{testimonials[currentTestimonial].name}</div>
+                        <div className="text-sm text-gray-400">{testimonials[currentTestimonial].role}</div>
+                        <div className="text-xs text-indigo-400 font-semibold">{testimonials[currentTestimonial].company}</div>
+                      </div>
+
+                      <div className="text-right">
+                        <div className="text-green-400 font-black text-lg">{testimonials[currentTestimonial].salary}</div>
+                        <div className="text-xs text-gray-500">dalam {testimonials[currentTestimonial].time}</div>
+                      </div>
                     </div>
                   </div>
                 </div>
-                <div className="flex justify-center space-x-2 mt-4">
+
+                <div className="flex justify-center space-x-3 mt-6">
                   {testimonials.map((_, index) => (
-                    <div key={index} className={`w-2 h-2 rounded-full transition-all duration-300 cursor-pointer ${index === currentTestimonial ? 'bg-indigo-500 scale-125' : 'bg-gray-600 hover:bg-gray-500'}`}></div>
+                    <div key={index} className={`w-3 h-3 rounded-full transition-all duration-300 cursor-pointer ${index === currentTestimonial ? 'bg-indigo-500 scale-125' : 'bg-gray-600 hover:bg-gray-500'}`}></div>
                   ))}
+                </div>
+              </div>
+
+              {/* New: Live Achievement Tracker */}
+              <div className="p-6 bg-gradient-to-r from-emerald-600/20 to-teal-600/20 backdrop-blur-2xl border border-emerald-500/30 rounded-2xl">
+                <div className="flex items-center justify-between mb-4">
+                  <h4 className="text-white font-bold text-lg">🏆 Pencapaian Terbaru</h4>
+                  <div className="px-3 py-1 bg-emerald-500/20 text-emerald-400 text-xs font-bold rounded-full animate-pulse">LIVE</div>
+                </div>
+                <div className="space-y-3">
+                  <div className="flex items-center space-x-3">
+                    <div className="w-8 h-8 bg-gradient-to-r from-yellow-500 to-orange-500 rounded-full flex items-center justify-center text-white font-bold text-xs">S</div>
+                    <div className="flex-1">
+                      <p className="text-white text-sm font-medium">Sarah baru saja menyelesaikan "Advanced React Development"</p>
+                      <p className="text-gray-400 text-xs">2 menit yang lalu</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center space-x-3">
+                    <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center text-white font-bold text-xs">A</div>
+                    <div className="flex-1">
+                      <p className="text-white text-sm font-medium">Ahmad mendapat pekerjaan baru sebagai Senior Developer</p>
+                      <p className="text-gray-400 text-xs">5 menit yang lalu</p>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -396,195 +555,266 @@ export function Welcome() {
         </div>
       </section>
 
-      {/* Enhanced Features Section */}
-      <section className="relative z-10 py-20 px-4 lg:px-8">
+      {/* Ultra Enhanced Features Section */}
+      <section className="relative z-10 py-24 px-4 lg:px-8">
         <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl lg:text-5xl font-bold text-white mb-6">
-              Mengapa Memilih <span className="bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">EduNova?</span>
+          <div className="text-center mb-20">
+            <div className="inline-flex items-center space-x-2 bg-gradient-to-r from-purple-600/20 to-pink-600/20 backdrop-blur-sm border border-purple-500/30 rounded-full px-6 py-3 mb-8">
+              <SparklesIcon className="w-5 h-5 text-purple-400 animate-pulse" />
+              <span className="text-purple-400 font-bold text-sm uppercase tracking-wide">Teknologi Terdepan</span>
+            </div>
+            <h2 className="text-5xl lg:text-6xl font-black text-white mb-8">
+              Mengapa <span className="bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">EduNova</span>
+              <br />
+              Menjadi Pilihan Terbaik?
             </h2>
-            <p className="text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed">Platform pembelajaran terdepan dengan teknologi AI dan metode pembelajaran yang terbukti efektif untuk mengakselerasi karir Anda</p>
+            <p className="text-2xl text-gray-300 max-w-4xl mx-auto leading-relaxed">
+              Platform pembelajaran revolusioner dengan teknologi AI terdepan dan metode pembelajaran yang telah terbukti mengakselerasi karir lebih dari 25,000 profesional Indonesia
+            </p>
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
             {features.map((feature, index) => (
               <div
                 key={index}
-                className={`group relative p-8 bg-gray-900/50 backdrop-blur-xl border ${feature.borderColor} rounded-2xl transition-all duration-500 hover:scale-105 hover:bg-gray-800/70 transform cursor-pointer ${
+                className={`group relative p-10 bg-gray-900/60 backdrop-blur-2xl border ${feature.borderColor} rounded-3xl transition-all duration-500 hover:scale-105 hover:bg-gray-800/70 transform cursor-pointer ${
                   feature.glowColor
-                } hover:shadow-2xl ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}
+                } hover:shadow-3xl ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}
                 style={{ transitionDelay: `${index * 150}ms` }}
               >
-                <div className={`relative p-4 ${feature.color} rounded-2xl backdrop-blur-sm border ${feature.borderColor} mb-6 group-hover:scale-110 transition-transform duration-300 overflow-hidden`}>
-                  <feature.icon className={`w-8 h-8 ${feature.iconColor} group-hover:animate-pulse relative z-10`} />
-                  <div className="absolute inset-0 bg-gradient-to-r from-white/0 to-white/10 transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-700 rounded-2xl"></div>
+                {/* Premium Badge */}
+                <div className="absolute top-4 right-4">
+                  <div className={`px-3 py-1 ${feature.badgeColor} backdrop-blur-sm rounded-full text-xs font-bold uppercase`}>{feature.badge}</div>
                 </div>
-                <h3 className="text-xl font-bold text-white mb-3 group-hover:text-transparent group-hover:bg-gradient-to-r group-hover:from-indigo-400 group-hover:to-purple-400 group-hover:bg-clip-text transition-all duration-300">
+
+                <div className={`relative p-6 ${feature.color} rounded-3xl backdrop-blur-sm border ${feature.borderColor} mb-8 group-hover:scale-110 transition-transform duration-300 overflow-hidden`}>
+                  <feature.icon className={`w-10 h-10 ${feature.iconColor} group-hover:animate-pulse relative z-10`} />
+                  <div className="absolute inset-0 bg-gradient-to-r from-white/0 to-white/15 transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-700 rounded-3xl"></div>
+                </div>
+
+                <h3 className="text-2xl font-black text-white mb-4 group-hover:text-transparent group-hover:bg-gradient-to-r group-hover:from-indigo-400 group-hover:to-purple-400 group-hover:bg-clip-text transition-all duration-300">
                   {feature.title}
                 </h3>
-                <p className="text-gray-400 leading-relaxed text-sm">{feature.desc}</p>
-                <div className="absolute inset-0 bg-gradient-to-r from-white/0 to-white/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-2xl"></div>
+                <p className="text-gray-400 leading-relaxed text-base">{feature.desc}</p>
+
+                <div className="absolute inset-0 bg-gradient-to-r from-white/0 to-white/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-3xl"></div>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Enhanced Course Categories */}
-      <section className="relative z-10 py-20 px-4 lg:px-8">
+      {/* Revolutionary Course Categories */}
+      <section className="relative z-10 py-24 px-4 lg:px-8">
         <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl lg:text-5xl font-bold text-white mb-6">
-              Kategori <span className="bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">Terpopuler</span>
+          <div className="text-center mb-20">
+            <div className="inline-flex items-center space-x-2 bg-gradient-to-r from-emerald-600/20 to-teal-600/20 backdrop-blur-sm border border-emerald-500/30 rounded-full px-6 py-3 mb-8">
+              <ChartBarIcon className="w-5 h-5 text-emerald-400 animate-pulse" />
+              <span className="text-emerald-400 font-bold text-sm uppercase tracking-wide">Karir Masa Depan</span>
+            </div>
+            <h2 className="text-5xl lg:text-6xl font-black text-white mb-8">
+              Bidang Keahlian <span className="bg-gradient-to-r from-emerald-400 via-teal-400 to-cyan-400 bg-clip-text text-transparent">Terpopuler</span>
             </h2>
-            <p className="text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed">Jelajahi berbagai bidang keahlian yang paling diminati di industri digital dan teknologi masa depan</p>
+            <p className="text-2xl text-gray-300 max-w-4xl mx-auto leading-relaxed">Jelajahi berbagai bidang keahlian yang paling diminati oleh industri global dan teknologi masa depan dengan potensi gaji hingga puluhan juta rupiah</p>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             {courseCategories.map((category, index) => (
-              <div key={index} className="group relative p-8 bg-gray-900/50 backdrop-blur-xl border border-gray-700/50 rounded-2xl transition-all duration-500 hover:scale-105 hover:bg-gray-800/70 cursor-pointer hover:shadow-2xl">
-                <div className={`absolute inset-0 bg-gradient-to-r ${category.color} opacity-0 group-hover:opacity-10 transition-opacity duration-300 rounded-2xl`}></div>
+              <div key={index} className="group relative p-10 bg-gray-900/60 backdrop-blur-2xl border border-gray-700/50 rounded-3xl transition-all duration-500 hover:scale-105 hover:bg-gray-800/70 cursor-pointer hover:shadow-3xl">
+                <div className={`absolute inset-0 bg-gradient-to-r ${category.color} opacity-0 group-hover:opacity-15 transition-opacity duration-300 rounded-3xl`}></div>
+
                 <div className="relative">
-                  <div className="flex items-center mb-4">
-                    <div className={`p-3 bg-gradient-to-r ${category.color} rounded-xl mr-4 group-hover:scale-110 transition-transform duration-300`}>
-                      <category.icon className="w-6 h-6 text-white" />
+                  <div className="flex items-start justify-between mb-6">
+                    <div className={`p-4 bg-gradient-to-r ${category.color} rounded-2xl mr-4 group-hover:scale-110 transition-transform duration-300 shadow-2xl`}>
+                      <category.icon className="w-8 h-8 text-white" />
                     </div>
-                    <div>
-                      <h3 className="text-xl font-bold text-white mb-1 group-hover:text-transparent group-hover:bg-gradient-to-r group-hover:from-indigo-400 group-hover:to-purple-400 group-hover:bg-clip-text transition-all duration-300">
-                        {category.name}
-                      </h3>
-                      <p className="text-sm text-gray-500">{category.students}</p>
+                    <div className="text-right">
+                      <div className="text-2xl font-black text-green-400">{category.salary}</div>
+                      <div className="text-xs text-gray-500 font-medium">rata-rata gaji</div>
                     </div>
                   </div>
-                  <p className="text-gray-400 mb-6 text-lg font-medium">{category.count}</p>
-                  <div className="flex items-center text-indigo-400 font-semibold group-hover:text-white transition-colors duration-300">
-                    <span>Jelajahi Kursus</span>
-                    <ArrowRightIcon className="w-4 h-4 ml-2 group-hover:translate-x-2 transition-transform duration-300" />
+
+                  <h3 className="text-2xl font-black text-white mb-3 group-hover:text-transparent group-hover:bg-gradient-to-r group-hover:from-indigo-400 group-hover:to-purple-400 group-hover:bg-clip-text transition-all duration-300">
+                    {category.name}
+                  </h3>
+
+                  <div className="space-y-3 mb-6">
+                    <div className="flex justify-between text-sm">
+                      <span className="text-gray-400">Kursus Tersedia</span>
+                      <span className="text-white font-bold">{category.count}</span>
+                    </div>
+                    <div className="flex justify-between text-sm">
+                      <span className="text-gray-400">Siswa Aktif</span>
+                      <span className="text-purple-400 font-bold">{category.students}</span>
+                    </div>
+                    <div className="flex justify-between text-sm">
+                      <span className="text-gray-400">Level</span>
+                      <span className="text-yellow-400 font-bold">{category.level}</span>
+                    </div>
+                    <div className="flex justify-between text-sm">
+                      <span className="text-gray-400">Durasi</span>
+                      <span className="text-cyan-400 font-bold">{category.duration}</span>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center text-indigo-400 font-bold text-lg group-hover:text-white transition-colors duration-300">
+                    <span>Mulai Belajar Sekarang</span>
+                    <ArrowRightIcon className="w-5 h-5 ml-3 group-hover:translate-x-3 transition-transform duration-300" />
                   </div>
                 </div>
-                <div className="absolute inset-0 bg-gradient-to-r from-white/0 to-white/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-2xl"></div>
+
+                <div className="absolute inset-0 bg-gradient-to-r from-white/0 to-white/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-3xl"></div>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Enhanced CTA Section */}
-      <section className="relative z-10 py-20 px-4 lg:px-8">
-        <div className="max-w-4xl mx-auto text-center">
-          <div className="relative p-12 bg-gradient-to-r from-indigo-600/20 via-purple-600/20 to-pink-600/20 backdrop-blur-xl border border-gray-700/50 rounded-3xl shadow-2xl">
-            <div className="absolute inset-0 bg-gradient-to-r from-indigo-600/5 via-purple-600/5 to-pink-600/5 rounded-3xl animate-pulse"></div>
+      {/* Ultimate CTA Section */}
+      <section className="relative z-10 py-24 px-4 lg:px-8">
+        <div className="max-w-5xl mx-auto text-center">
+          <div className="relative p-16 bg-gradient-to-r from-indigo-600/30 via-purple-600/30 to-pink-600/30 backdrop-blur-2xl border border-gray-700/50 rounded-[3rem] shadow-3xl overflow-hidden">
+            {/* Enhanced Background Effects */}
+            <div className="absolute inset-0 bg-gradient-to-r from-indigo-600/10 via-purple-600/10 to-pink-600/10 rounded-[3rem] animate-pulse"></div>
+            <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 rounded-t-[3rem]"></div>
+
             <div className="relative">
-              <div className="mb-8">
-                <div className="inline-flex items-center space-x-2 bg-gradient-to-r from-yellow-500/20 to-orange-500/20 backdrop-blur-sm border border-yellow-500/30 rounded-full px-4 py-2 mb-4 animate-bounce">
-                  <SparklesIcon className="w-5 h-5 text-yellow-400 animate-spin" />
-                  <span className="text-yellow-400 font-bold text-sm">PENAWARAN TERBATAS</span>
+              <div className="mb-10">
+                <div className="inline-flex items-center space-x-3 bg-gradient-to-r from-yellow-500/30 to-orange-500/30 backdrop-blur-sm border border-yellow-500/40 rounded-2xl px-8 py-4 mb-8 animate-bounce">
+                  <SparklesIcon className="w-6 h-6 text-yellow-400 animate-spin" />
+                  <span className="text-yellow-400 font-black text-lg uppercase tracking-wide">⚡ Penawaran Terbatas Hari Ini</span>
+                  <div className="px-3 py-1 bg-red-500 text-white text-xs font-black rounded-full animate-pulse">HANYA 24 JAM</div>
                 </div>
-                <h2 className="text-4xl lg:text-5xl font-bold text-white mb-6">
-                  Siap Memulai Perjalanan
+
+                <h2 className="text-6xl lg:text-7xl font-black text-white mb-8 leading-tight">
+                  Siap Mengubah Hidup
                   <br />
-                  <span className="bg-gradient-to-r from-yellow-400 to-orange-500 bg-clip-text text-transparent animate-gradient-x">Pembelajaran Anda?</span>
+                  <span className="bg-gradient-to-r from-yellow-400 via-orange-400 to-red-400 bg-clip-text text-transparent animate-gradient-x">Secara Total?</span>
                 </h2>
-                <p className="text-xl text-gray-300 mb-8 max-w-2xl mx-auto leading-relaxed">
-                  Bergabunglah sekarang dan dapatkan akses ke <span className="text-white font-bold">500+ kursus premium</span>
-                  dengan <span className="text-yellow-400 font-bold animate-pulse">diskon 50%</span> untuk pendaftar baru!
+
+                <p className="text-2xl text-gray-300 mb-10 max-w-3xl mx-auto leading-relaxed">
+                  Bergabunglah sekarang dan dapatkan akses ke <span className="text-white font-black">750+ kursus premium</span> dengan
+                  <span className="text-yellow-400 font-black animate-pulse"> diskon 70%</span> + <span className="text-green-400 font-black">garansi kerja 100%</span>
+                  untuk 100 pendaftar pertama hari ini!
                 </p>
+
+                {/* Countdown Timer */}
+                <div className="flex justify-center space-x-4 mb-8">
+                  {['23', '59', '47'].map((time, index) => (
+                    <div key={index} className="text-center">
+                      <div className="w-16 h-16 bg-gradient-to-r from-red-500 to-orange-500 rounded-xl flex items-center justify-center text-white font-black text-xl animate-pulse">{time}</div>
+                      <div className="text-xs text-gray-400 mt-1 font-medium">{index === 0 ? 'JAM' : index === 1 ? 'MENIT' : 'DETIK'}</div>
+                    </div>
+                  ))}
+                </div>
               </div>
 
-              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <div className="flex flex-col sm:flex-row gap-6 justify-center mb-10">
                 <Link
                   to="/register"
-                  className="group relative inline-flex items-center justify-center px-10 py-5 bg-gradient-to-r from-yellow-500 via-orange-500 to-red-500 hover:from-yellow-600 hover:via-orange-600 hover:to-red-600 text-white font-black text-xl rounded-2xl transition-all duration-300 transform hover:scale-105 hover:shadow-2xl hover:shadow-orange-500/25 overflow-hidden"
+                  className="group relative inline-flex items-center justify-center px-16 py-8 bg-gradient-to-r from-yellow-500 via-orange-500 to-red-500 hover:from-yellow-600 hover:via-orange-600 hover:to-red-600 text-white font-black text-2xl rounded-3xl transition-all duration-300 transform hover:scale-105 hover:shadow-3xl hover:shadow-orange-500/30 overflow-hidden"
                 >
-                  <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
-                  <TrophyIcon className="mr-3 w-6 h-6 animate-bounce" />
+                  <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/25 to-white/0 transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
+                  <TrophyIcon className="mr-4 w-8 h-8 animate-bounce" />
                   <span className="relative">Daftar Sekarang</span>
-                  <div className="ml-2 px-2 py-1 bg-red-500 text-xs rounded-full animate-pulse">GRATIS</div>
+                  <div className="ml-3 px-4 py-2 bg-red-600 text-base rounded-full animate-pulse shadow-lg">GRATIS</div>
                 </Link>
 
                 <Link
                   to="/course"
-                  className="group inline-flex items-center justify-center px-10 py-5 border-2 border-gray-600 hover:border-orange-500 text-gray-300 hover:text-white font-bold text-xl rounded-2xl transition-all duration-300 transform hover:scale-105 backdrop-blur-sm hover:bg-orange-500/10"
+                  className="group inline-flex items-center justify-center px-16 py-8 border-3 border-gray-600 hover:border-orange-500 text-gray-300 hover:text-white font-black text-2xl rounded-3xl transition-all duration-300 transform hover:scale-105 backdrop-blur-sm hover:bg-orange-500/20"
                 >
-                  <BookOpenIcon className="mr-3 w-6 h-6 group-hover:animate-pulse" />
+                  <EyeIcon className="mr-4 w-8 h-8 group-hover:animate-pulse" />
                   <span>Lihat Semua Kursus</span>
                 </Link>
               </div>
 
-              <div className="mt-8 text-sm text-gray-400">
-                <p className="flex items-center justify-center space-x-4">
-                  <span className="flex items-center">
-                    <CheckCircleIcon className="w-4 h-4 mr-1 text-green-400" /> Tanpa komitmen
-                  </span>
-                  <span className="flex items-center">
-                    <CheckCircleIcon className="w-4 h-4 mr-1 text-green-400" /> Batal kapan saja
-                  </span>
-                  <span className="flex items-center">
-                    <CheckCircleIcon className="w-4 h-4 mr-1 text-green-400" /> Sertifikat resmi
-                  </span>
-                </p>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-sm text-gray-400 max-w-3xl mx-auto">
+                <div className="flex items-center justify-center space-x-2">
+                  <CheckCircleIcon className="w-5 h-5 text-green-400" />
+                  <span>✅ Tanpa biaya tersembunyi</span>
+                </div>
+                <div className="flex items-center justify-center space-x-2">
+                  <CheckCircleIcon className="w-5 h-5 text-green-400" />
+                  <span>✅ Garansi uang kembali 30 hari</span>
+                </div>
+                <div className="flex items-center justify-center space-x-2">
+                  <CheckCircleIcon className="w-5 h-5 text-green-400" />
+                  <span>✅ Sertifikat internasional</span>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Enhanced Footer */}
-      <footer className="relative z-10 border-t border-gray-800 py-12 px-4 lg:px-8 bg-gray-900/30 backdrop-blur-xl">
-        <div className="max-w-7xl mx-auto text-center">
-          <div className="flex items-center justify-center space-x-3 mb-6">
-            <div className="relative p-2 bg-gradient-to-r from-indigo-600 to-purple-600 rounded-xl shadow-lg">
-              <AcademicCapIcon className="h-6 w-6 text-white" />
-              <div className="absolute -top-1 -right-1 w-3 h-3 bg-green-400 rounded-full animate-pulse"></div>
+      {/* Premium Footer */}
+      <footer className="relative z-10 border-t border-gray-800 py-16 px-4 lg:px-8 bg-gray-900/40 backdrop-blur-2xl">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-12">
+            <div className="flex items-center justify-center space-x-4 mb-8">
+              <div className="relative p-4 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 rounded-3xl shadow-2xl">
+                <AcademicCapIcon className="h-10 w-10 text-white" />
+                <div className="absolute -top-2 -right-2 w-5 h-5 bg-gradient-to-r from-green-400 to-emerald-400 rounded-full animate-pulse shadow-lg"></div>
+              </div>
+              <div>
+                <div className="flex items-center space-x-3">
+                  <span className="text-3xl font-black text-white">EduNova</span>
+                  <div className="px-3 py-1 bg-gradient-to-r from-yellow-500 to-orange-500 text-black text-xs font-black rounded-full">PREMIUM</div>
+                </div>
+                <div className="text-sm text-gray-400 font-medium">Platform Pembelajaran #1 Indonesia</div>
+              </div>
             </div>
-            <div>
-              <span className="text-xl font-bold text-white">EduNova</span>
-              <div className="text-xs text-gray-400">Learning Platform</div>
+
+            <p className="text-2xl text-gray-300 mb-10 max-w-3xl mx-auto leading-relaxed">Bergabunglah dengan kami dan tingkatkan keterampilan Anda ke level selanjutnya dengan kursus-kursus terbaik dari para ahli industri.</p>
+
+            <div className="flex justify-center space-x-12 text-gray-400 mb-12 text-lg">
+              <Link to="/privacy" className="hover:text-white transition-colors duration-300 relative group font-semibold">
+                Kebijakan Privasi
+                <div className="absolute -bottom-2 left-0 w-0 h-1 bg-gradient-to-r from-indigo-500 to-purple-500 group-hover:w-full transition-all duration-300 rounded-full"></div>
+              </Link>
+              <Link to="/terms" className="hover:text-white transition-colors duration-300 relative group font-semibold">
+                Syarat & Ketentuan
+                <div className="absolute -bottom-2 left-0 w-0 h-1 bg-gradient-to-r from-indigo-500 to-purple-500 group-hover:w-full transition-all duration-300 rounded-full"></div>
+              </Link>
+              <Link to="/contact" className="hover:text-white transition-colors duration-300 relative group font-semibold">
+                Hubungi Kami
+                <div className="absolute -bottom-2 left-0 w-0 h-1 bg-gradient-to-r from-indigo-500 to-purple-500 group-hover:w-full transition-all duration-300 rounded-full"></div>
+              </Link>
             </div>
           </div>
-          <p className="text-gray-400 mb-6 max-w-2xl mx-auto">Platform pembelajaran terdepan untuk mengembangkan karir dan mencapai impian Anda dengan teknologi terdepan dan instruktur berkualitas global.</p>
-          <div className="flex justify-center space-x-8 text-gray-400 mb-8">
-            <Link to="/privacy" className="hover:text-white transition-colors duration-300 relative group">
-              Kebijakan Privasi
-              <div className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-indigo-500 to-purple-500 group-hover:w-full transition-all duration-300"></div>
-            </Link>
-            <Link to="/terms" className="hover:text-white transition-colors duration-300 relative group">
-              Syarat & Ketentuan
-              <div className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-indigo-500 to-purple-500 group-hover:w-full transition-all duration-300"></div>
-            </Link>
-            <Link to="/contact" className="hover:text-white transition-colors duration-300 relative group">
-              Kontak
-              <div className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-indigo-500 to-purple-500 group-hover:w-full transition-all duration-300"></div>
-            </Link>
-          </div>
-          <div className="pt-8 border-t border-gray-800 text-gray-500">
-            <p>&copy; 2024 EduNova. Seluruh hak cipta dilindungi undang-undang.</p>
+
+          <div className="pt-8 border-t border-gray-800 text-center">
+            <p className="text-gray-500 text-lg">&copy; 2024 EduNova Indonesia. Seluruh hak cipta dilindungi undang-undang.</p>
+            <p className="text-gray-600 text-sm mt-2">Dibuat dengan ❤️ untuk masa depan pendidikan Indonesia</p>
           </div>
         </div>
       </footer>
 
       <style>{`
-        .animate-spin.slow {
-          animation: spin 20s linear infinite;
+        .animate-spin-slow {
+          animation: spin 30s linear infinite;
         }
         @keyframes spin {
           from { transform: rotate(0deg); }
           to { transform: rotate(360deg); }
         }
         .animate-float {
-          animation: float 6s ease-in-out infinite;
+          animation: float 8s ease-in-out infinite;
         }
         @keyframes float {
-          0%, 100% { transform: translateY(0px); }
-          50% { transform: translateY(-20px); }
+          0%, 100% { transform: translateY(0px) rotate(0deg); }
+          25% { transform: translateY(-15px) rotate(5deg); }
+          50% { transform: translateY(-25px) rotate(0deg); }
+          75% { transform: translateY(-15px) rotate(-5deg); }
         }
         .animate-fade-in-up {
-          animation: fadeInUp 1s ease-out forwards;
+          animation: fadeInUp 1.2s ease-out forwards;
         }
         @keyframes fadeInUp {
           from {
             opacity: 0;
-            transform: translateY(30px);
+            transform: translateY(40px);
           }
           to {
             opacity: 1;
@@ -592,8 +822,8 @@ export function Welcome() {
           }
         }
         .animate-gradient-x {
-          animation: gradient-x 3s ease infinite;
-          background-size: 200% 200%;
+          animation: gradient-x 4s ease infinite;
+          background-size: 300% 300%;
         }
         @keyframes gradient-x {
           0%, 100% {
@@ -605,6 +835,12 @@ export function Welcome() {
         }
         .border-3 {
           border-width: 3px;
+        }
+        .shadow-3xl {
+          box-shadow: 0 35px 60px -12px rgba(0, 0, 0, 0.25);
+        }
+        .hover\:shadow-3xl:hover {
+          box-shadow: 0 35px 60px -12px rgba(0, 0, 0, 0.4);
         }
       `}</style>
     </main>
